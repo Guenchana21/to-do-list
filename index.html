@@ -8,6 +8,64 @@
     </head>
 
     <body>
+        <div class="todo-app">
+            <header>
+                <p class="kicker">PRACTICAL ASSIGNMENT</p>
+                <h1>To-Do List</h1>
+            </header>
+
+            <!-- QUOTE WIDGET (Homework: Fetch Motivational Quotes) -->
+            <div class="quote-box" id="quote-box">
+                <p class="quote-text" id="quote-text">
+                    Click "New Quote" for a little motivation.
+                </p>
+                <p class="quote-author" id="quote-author"></p>
+                <button class="quote-btn" id="quote-btn" type="button">
+                    New Quote
+                </button>
+            </div>
+
+            <div class="composer">
+                <input
+                    type="text"
+                    id="task-input"
+                    placeholder="Add a task..."
+                    autocomplete="off"
+                />
+                <button id="add-btn">Add</button>
+            </div>
+
+            <p class="error-msg" id="error-msg"></p>
+
+            <!-- FILTER TABS -->
+            <div class="filters" id="filters">
+                <button
+                    class="filter-btn active"
+                    data-filter="all"
+                    type="button"
+                >
+                    All
+                </button>
+                <button class="filter-btn" data-filter="active" type="button">
+                    Active
+                </button>
+                <button class="filter-btn" data-filter="done" type="button">
+                    Done
+                </button>
+            </div>
+
+            <div class="list-meta">
+                <span id="count-label">0 tasks</span>
+                <span id="done-label"></span>
+            </div>
+
+            <ul id="task-list"></ul>
+
+            <div class="empty-state" id="empty-state">
+                No tasks yet — add your first one above.
+            </div>
+        </div>
+
         <script src="to-do-list.js"></script>
     </body>
 </html>
