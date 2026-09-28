@@ -1,5 +1,6 @@
 // ---- Element references ----
 const input = document.getElementById("task-input");
+const dueInput = document.getElementById("due-input");
 const addBtn = document.getElementById("add-btn");
 const list = document.getElementById("task-list");
 const errorMsg = document.getElementById("error-msg");
@@ -12,8 +13,14 @@ const quoteBtn = document.getElementById("quote-btn");
 const quoteText = document.getElementById("quote-text");
 const quoteAuthor = document.getElementById("quote-author");
 
+const toast = document.getElementById("toast");
+const toastMsg = document.getElementById("toast-msg");
+const toastUndo = document.getElementById("toast-undo");
+
 const STORAGE_KEY = "todo-tasks";
 let currentFilter = "all";
+let lastDeleted = null; // { node, next } — used by Undo
+let toastTimer = null;
 
 // =========================================================
 // CORE REQUIREMENT 1: Input & Validation
@@ -33,20 +40,22 @@ function handleAddTask() {
     }
 
     errorMsg.textContent = "";
-    createTask(value, false);
+    createTask(value, false, dueInput.value);
     saveTasks();
     input.value = "";
+    dueInput.value = "";
     input.focus();
 }
 
 // =========================================================
 // CORE REQUIREMENT 2: Dynamic List Creation
 // =========================================================
-function createTask(text, isDone) {
+function createTask(text, isDone, due) {
     // Create a new <li> element, insert text content, append to <ul>
     const li = document.createElement("li");
     li.draggable = true;
     if (isDone) li.classList.add("done");
+    if (due) li.dataset.due = due;
 
     // Drag handle
     const handle = document.createElement("button");
@@ -71,10 +80,20 @@ function createTask(text, isDone) {
             <polyline points="20 6 9 17 4 12"></polyline>
         </svg>`;
 
-    // Task text
+    // Task text + due badge live together in one column
+    const main = document.createElement("div");
+    main.className = "task-main";
+
     const span = document.createElement("span");
     span.className = "task-text";
     span.textContent = text; // insert text content
+    span.title = "Double-click to edit";
+
+    const badge = document.createElement("span");
+    badge.className = "due-badge";
+
+    main.appendChild(span);
+    main.appendChild(badge);
 
     // Bonus Feature: Delete button
     const del = document.createElement("button");
@@ -90,16 +109,16 @@ function createTask(text, isDone) {
 
     check.addEventListener("click", () => {
         li.classList.toggle("done");
+        renderDue(li);
         updateCounts();
         applyFilter();
         saveTasks();
     });
 
-    del.addEventListener("click", () => {
-        li.remove();
-        updateCounts();
-        saveTasks();
-    });
+    del.addEventListener("click", () => deleteTask(li));
+
+    // Double-click the text to edit it
+    span.addEventListener("dblclick", () => startEdit(span, li));
 
     li.addEventListener("dragstart", () => li.classList.add("dragging"));
     li.addEventListener("dragend", () => {
@@ -109,12 +128,129 @@ function createTask(text, isDone) {
 
     li.appendChild(handle);
     li.appendChild(check);
-    li.appendChild(span);
+    li.appendChild(main);
     li.appendChild(del);
 
     list.appendChild(li); // append the new <li> to the <ul>
+    renderDue(li);
     updateCounts();
 }
+
+// =========================================================
+// Edit a task (double-click the text)
+// =========================================================
+function startEdit(span, li) {
+    const editor = document.createElement("input");
+    editor.type = "text";
+    editor.className = "edit-input";
+    editor.value = span.textContent;
+
+    li.draggable = false; // so you can select text while editing
+    span.replaceWith(editor);
+    editor.focus();
+    editor.select();
+
+    let finished = false;
+
+    function finish(save) {
+        if (finished) return;
+        finished = true;
+
+        const newText = editor.value.trim();
+        if (save && newText !== "") span.textContent = newText;
+
+        editor.replaceWith(span);
+        li.draggable = true;
+        saveTasks();
+    }
+
+    editor.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") finish(true);
+        if (e.key === "Escape") finish(false);
+    });
+
+    editor.addEventListener("blur", () => finish(true));
+}
+
+// =========================================================
+// Due dates
+// =========================================================
+function todayString() {
+    const d = new Date();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${month}-${day}`;
+}
+
+function renderDue(li) {
+    const badge = li.querySelector(".due-badge");
+    const due = li.dataset.due;
+
+    if (!due) {
+        badge.className = "due-badge";
+        badge.textContent = "";
+        return;
+    }
+
+    const pretty = new Date(due + "T00:00:00").toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+    });
+    const today = todayString();
+    const isDone = li.classList.contains("done");
+
+    badge.className = "due-badge show";
+
+    if (!isDone && due < today) {
+        badge.classList.add("overdue");
+        badge.textContent = `Overdue · ${pretty}`;
+    } else if (!isDone && due === today) {
+        badge.classList.add("today");
+        badge.textContent = "Due today";
+    } else {
+        badge.textContent = `Due ${pretty}`;
+    }
+}
+
+// =========================================================
+// Delete with Undo
+// =========================================================
+function deleteTask(li) {
+    lastDeleted = { node: li, next: li.nextElementSibling };
+    li.remove();
+    updateCounts();
+    saveTasks();
+    showToast("Task deleted");
+}
+
+function showToast(message) {
+    toastMsg.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+        lastDeleted = null; // too late to undo now
+    }, 5000);
+}
+
+toastUndo.addEventListener("click", () => {
+    if (!lastDeleted) return;
+
+    const { node, next } = lastDeleted;
+    if (next && next.parentNode === list) {
+        list.insertBefore(node, next); // put it back where it was
+    } else {
+        list.appendChild(node);
+    }
+
+    lastDeleted = null;
+    clearTimeout(toastTimer);
+    toast.classList.remove("show");
+
+    updateCounts();
+    applyFilter();
+    saveTasks();
+});
 
 // ---- Drag-to-reorder ----
 function getDragAfterElement(container, y) {
@@ -194,6 +330,7 @@ function saveTasks() {
         const items = [...list.querySelectorAll("li")].map((li) => ({
             text: li.querySelector(".task-text").textContent,
             done: li.classList.contains("done"),
+            due: li.dataset.due || "",
         }));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch (err) {
@@ -206,7 +343,7 @@ function loadTasks() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
         const items = JSON.parse(raw);
-        items.forEach((item) => createTask(item.text, item.done));
+        items.forEach((item) => createTask(item.text, item.done, item.due));
         applyFilter();
     } catch (err) {
         // Storage unavailable or corrupted — just start with an empty list
@@ -247,6 +384,10 @@ quoteBtn.addEventListener("click", fetchQuote);
 addBtn.addEventListener("click", handleAddTask);
 
 input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleAddTask();
+});
+
+dueInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") handleAddTask();
 });
 
