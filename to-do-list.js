@@ -89,11 +89,40 @@ function createTask(text, isDone, due) {
     span.textContent = text; // insert text content
     span.title = "Double-click to edit";
 
-    const badge = document.createElement("span");
+    // Due-date badge: click it to set / change / clear the date
+    const badge = document.createElement("button");
+    badge.type = "button";
     badge.className = "due-badge";
+    badge.title = "Click to change due date";
+
+    const dateEditor = document.createElement("input");
+    dateEditor.type = "date";
+    dateEditor.className = "due-editor";
+    dateEditor.tabIndex = -1;
+
+    badge.addEventListener("click", () => {
+        dateEditor.value = li.dataset.due || "";
+        try {
+            dateEditor.showPicker(); // opens the calendar popup
+        } catch (err) {
+            dateEditor.focus(); // older browsers fallback
+            dateEditor.click();
+        }
+    });
+
+    dateEditor.addEventListener("change", () => {
+        if (dateEditor.value) {
+            li.dataset.due = dateEditor.value;
+        } else {
+            delete li.dataset.due; // date cleared
+        }
+        renderDue(li);
+        saveTasks();
+    });
 
     main.appendChild(span);
     main.appendChild(badge);
+    main.appendChild(dateEditor);
 
     // Bonus Feature: Delete button
     const del = document.createElement("button");
@@ -187,8 +216,8 @@ function renderDue(li) {
     const due = li.dataset.due;
 
     if (!due) {
-        badge.className = "due-badge";
-        badge.textContent = "";
+        badge.className = "due-badge empty";
+        badge.textContent = "+ Add due date";
         return;
     }
 
@@ -199,7 +228,7 @@ function renderDue(li) {
     const today = todayString();
     const isDone = li.classList.contains("done");
 
-    badge.className = "due-badge show";
+    badge.className = "due-badge";
 
     if (!isDone && due < today) {
         badge.classList.add("overdue");

@@ -621,3 +621,46 @@ body {
     font-weight: 700;
     cursor: pointer;
 }
+/* CLICKABLE DUE-DATE BADGE */
+.todo-app .task-main {
+    position: relative;
+}
+
+.todo-app .due-badge {
+    display: inline-block;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.todo-app .due-badge:hover {
+    transform: translateY(-1px);
+}
+
+/* task has no date yet */
+.todo-app .due-badge.empty {
+    background: transparent;
+    border: 1.5px dashed var(--text-light);
+    color: var(--text-light);
+    opacity: 0.55;
+}
+
+.todo-app .due-badge.empty:hover {
+    opacity: 1;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* hidden real date input, only used to open the calendar popup */
+.todo-app .due-editor {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
