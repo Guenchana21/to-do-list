@@ -9,7 +9,7 @@
     --text-dark: #232946;
     --text-light: #6b7189;
     --card-bg: #ffffff;
-    --shadow-sm: 0 2px 6px rgba(35, 41, 70, 0.08);
+    --shadow-sm: 0 2px 6px hsla(303, 78%, 20%, 0.08);
     --shadow-md: 0 12px 32px rgba(255, 107, 91, 0.18);
 }
 
@@ -44,7 +44,7 @@ body {
     padding-bottom: 40px;
 
     /* Morning background */
-    background-image: url("image/night-sky.jpg");
+    background-image: url("image/night-sky.webp");
 
     background-size: cover;
     background-position: center;
@@ -62,14 +62,15 @@ body {
    ========================= */
 
 body.night-mode {
-    background-image: url("image/day\ starry\ sun.jpg");
-    color: #160b0b;
+    background-image: url("image/starry-sun.webp");
+    color: hsl(46, 49%, 68%);
 }
 
 body.night-mode .todo-app {
-    background: #1e1e1e;
-    color: #140202;
-    border-color: #333;
+    background: rgba(15, 20, 35, 0.75);
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 body.night-mode .todo-app h1 {
@@ -82,9 +83,9 @@ body.night-mode #task-input,
 body.night-mode #due-input,
 body.night-mode #priority-input,
 body.night-mode .search-input {
-    background: #2a2a2a;
+    background: hsla(180, 10%, 94%, 0);
     color: #ffffff;
-    border-color: #444;
+    border-color: #c0b7b744;
 }
 
 body.night-mode #task-input::placeholder,
@@ -93,7 +94,7 @@ body.night-mode .search-input::placeholder {
 }
 
 body.night-mode #task-list li {
-    background: #2a2a2a;
+    background: #2a2a2a0e;
     color: #ffffff;
 }
 
@@ -102,8 +103,7 @@ body.night-mode .task-text {
 }
 
 body.night-mode .quote-box {
-    background: #252525;
-    border-color: #444;
+    border-color: none;
 }
 
 body.night-mode .quote-text {
@@ -156,7 +156,9 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     margin: 20px;
     padding: 42px 38px;
     color: var(--text-dark);
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     border-radius: 28px;
     box-shadow: var(--shadow-md);
     border: 1px solid rgba(35, 41, 70, 0.06);
@@ -286,22 +288,6 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 .todo-app .filter-btn.active {
     background: linear-gradient(135deg, var(--primary), var(--pink));
     color: #ffffff;
-}
-
-.todo-app .kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #ffffff;
-    margin: 0 0 14px;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--pink));
-    padding: 6px 14px;
-    border-radius: 999px;
-    box-shadow: 0 4px 12px rgba(255, 107, 91, 0.35);
 }
 
 .todo-app h1 {
@@ -488,7 +474,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app #task-list li:hover {
     transform: translateY(-3px) scale(1.01);
-    box-shadow: var(--shadow-sm);
+
     border-color: var(--accent, var(--primary));
 }
 
