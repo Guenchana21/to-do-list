@@ -449,7 +449,16 @@ function saveTasks() {
         // Storage unavailable (e.g. opened via file:// in some browsers) — skip silently
     }
 }
-
+function myFunction() {
+    const body = document.body;
+    const button = document.getElementById("mode-btn");
+    body.classList.toggle("night-mode");
+    if (body.classList.contains("night-mode")) {
+        button.textContent = "☀️ Light Mode";
+    } else {
+        button.textContent = "🌙 Dark Mode";
+    }
+}
 function loadTasks() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -502,10 +511,7 @@ function restartQuoteTimer() {
     clearInterval(quoteTimer);
     quoteTimer = setInterval(fetchQuote, QUOTE_INTERVAL_MS);
 }
-function myFunction() {
-    var element = document.body;
-    element.classList.toggle("dark-mode");
-}
+
 // =========================================================
 // Wiring
 // =========================================================

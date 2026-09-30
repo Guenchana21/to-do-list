@@ -33,8 +33,8 @@ body {
 }
 
 body {
-    background-color: white;
-    color: black;
+    background-color: #f0f7fd;
+    color: #222;
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -42,14 +42,102 @@ body {
     justify-content: center;
     padding-top: 40px;
     padding-bottom: 40px;
+    transition: 0.4s ease;
 
     font-family:
         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.dark-mode {
-    background-image: linear-gradient(red, yellow, blue);
-    color: white;
+/* =========================
+   DARK MODE
+   ========================= */
+
+body.night-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.night-mode .todo-app {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    border-color: #333;
+}
+
+body.night-mode .todo-app h1 {
+    color: #ffffff;
+    background: none;
+    -webkit-text-fill-color: #ffffff;
+}
+
+body.night-mode #task-input,
+body.night-mode #due-input,
+body.night-mode #priority-input,
+body.night-mode .search-input {
+    background: #2a2a2a;
+    color: #ffffff;
+    border-color: #444;
+}
+
+body.night-mode #task-input::placeholder,
+body.night-mode .search-input::placeholder {
+    color: #aaa;
+}
+
+body.night-mode #task-list li {
+    background: #2a2a2a;
+    color: #ffffff;
+}
+
+body.night-mode .task-text {
+    color: #ffffff;
+}
+
+body.night-mode .quote-box {
+    background: #252525;
+    border-color: #444;
+}
+
+body.night-mode .quote-text {
+    color: #ffffff;
+}
+
+body.night-mode .quote-btn {
+    background: #2a2a2a;
+    color: #b9a0ff;
+}
+
+body.night-mode .filter-btn {
+    background: #2a2a2a;
+    color: #cccccc;
+}
+
+body.night-mode .sort-select {
+    background: #2a2a2a;
+    color: #ffffff;
+}
+
+body.night-mode .empty-state {
+    background: #252525;
+    border-color: #444;
+}
+
+body.night-mode .task-list-container::-webkit-scrollbar-track {
+    background: #222;
+}
+
+body.night-mode .task-list-container::-webkit-scrollbar-thumb {
+    background: #555;
+}
+
+body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+#mode-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
 }
 .todo-app {
     box-sizing: border-box;
