@@ -11,7 +11,10 @@
         <div class="todo-app">
             <header>
                 <p class="kicker">PRACTICAL ASSIGNMENT</p>
-                <h1>To-Do List</h1>
+                <div class="logo">
+                    <h1>To-Do List</h1>
+                    <button onclick="myFunction()">Toggle dark mode</button>
+                </div>
             </header>
 
             <!-- QUOTE WIDGET (Homework: Fetch Motivational Quotes) -->
@@ -35,13 +38,39 @@
                 <button id="add-btn">Add</button>
             </div>
 
-            <!-- DUE DATE (optional) -->
-            <label class="due-row" for="due-input">
-                Due date (optional)
-                <input type="date" id="due-input" />
-            </label>
+            <!-- DUE DATE + PRIORITY (optional) -->
+            <div class="due-row">
+                <label for="due-input">
+                    Due date
+                    <input type="date" id="due-input" />
+                </label>
+                <label for="priority-input">
+                    Priority
+                    <select id="priority-input">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </label>
+            </div>
 
             <p class="error-msg" id="error-msg"></p>
+
+            <!-- SEARCH + SORT -->
+            <div class="toolbar">
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search tasks..."
+                    autocomplete="off"
+                />
+                <select id="sort-select" class="sort-select">
+                    <option value="manual">Manual order</option>
+                    <option value="due">Sort by due date</option>
+                    <option value="priority">Sort by priority</option>
+                </select>
+            </div>
 
             <!-- FILTER TABS -->
             <div class="filters" id="filters">
@@ -60,15 +89,12 @@
                 </button>
             </div>
 
-            <div class="list-meta">
-                <span id="count-label">0 tasks</span>
-                <span id="done-label"></span>
-            </div>
+            <div class="task-list-container">
+                <ul id="task-list"></ul>
 
-            <ul id="task-list"></ul>
-
-            <div class="empty-state" id="empty-state">
-                No tasks yet — add your first one above.
+                <div class="empty-state" id="empty-state">
+                    No tasks yet — add your first one above.
+                </div>
             </div>
         </div>
 
@@ -77,7 +103,6 @@
             <span id="toast-msg">Task deleted</span>
             <button id="toast-undo" type="button">Undo</button>
         </div>
-
-        <script src="to-do-list.js"></script>
     </body>
+    <script src="to-do-list.js"></script>
 </html>

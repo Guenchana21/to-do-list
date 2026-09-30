@@ -33,26 +33,29 @@ body {
 }
 
 body {
+    background-color: white;
+    color: black;
     min-height: 100vh;
     margin: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    background: linear-gradient(
-        135deg,
-        #fff1eb 0%,
-        #ffe0d6 35%,
-        #dff7f3 70%,
-        #ece3ff 100%
-    );
+    padding-top: 40px;
+    padding-bottom: 40px;
+
     font-family:
         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+.dark-mode {
+    background-image: linear-gradient(red, yellow, blue);
+    color: white;
+}
 .todo-app {
     box-sizing: border-box;
     width: 100%;
-    max-width: 520px;
+    max-width: 1000px;
+    height: 80%;
     margin: 20px;
     padding: 42px 38px;
     color: var(--text-dark);
@@ -76,7 +79,28 @@ body {
     opacity: 0.15;
     pointer-events: none;
 }
-
+.logo {
+    display: flex;
+    justify-content: space-between;
+}
+.logo button {
+    background: linear-gradient(135deg, var(--primary), var(--pink));
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+.logo button:hover {
+    background: linear-gradient(135deg, var(--yellow), var(--primary));
+    transform: translateY(-1px);
+}
 .todo-app header {
     margin-bottom: 24px;
     position: relative;
@@ -663,4 +687,176 @@ body {
     height: 1px;
     opacity: 0;
     pointer-events: none;
+}
+/* =========================================================
+   PRIORITY TAGS, SEARCH BOX, SORT DROPDOWN
+   ========================================================= */
+
+/* Due date + priority now share one row */
+.todo-app .due-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 10px 2px 0;
+}
+
+.todo-app .due-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.todo-app #due-input,
+.todo-app #priority-input {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-dark);
+    background: #fbfaf8;
+    border: 2px solid var(--secondary);
+    border-radius: 10px;
+    padding: 6px 10px;
+    outline: none;
+    cursor: pointer;
+}
+
+.todo-app #due-input:focus,
+.todo-app #priority-input:focus {
+    border-color: var(--primary);
+}
+
+/* Search + sort toolbar */
+.todo-app .toolbar {
+    display: flex;
+    gap: 10px;
+    margin: 18px 0 4px;
+}
+
+.todo-app .search-input {
+    flex: 1;
+    min-width: 0;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-dark);
+    background: #fbfaf8;
+    border: 2px solid var(--secondary);
+    border-radius: 12px;
+    padding: 10px 14px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.todo-app .search-input::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+.todo-app .search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(255, 107, 91, 0.12);
+}
+
+.todo-app .sort-select {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    background: var(--secondary);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 10px 12px;
+    outline: none;
+    cursor: pointer;
+    max-width: 150px;
+}
+
+.todo-app .sort-select:focus {
+    border-color: var(--primary);
+}
+
+/* Priority tag on each task */
+.todo-app .priority-badge {
+    display: inline-block;
+    align-self: flex-start;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-top: 2px;
+    transition: transform 0.15s ease;
+}
+
+.todo-app .priority-badge:hover {
+    transform: translateY(-1px);
+}
+
+.todo-app .priority-badge.low {
+    background: rgba(23, 184, 166, 0.15);
+    color: #0e8577;
+}
+
+.todo-app .priority-badge.medium {
+    background: rgba(255, 183, 3, 0.18);
+    color: #b07a00;
+}
+
+.todo-app .priority-badge.high {
+    background: rgba(232, 80, 63, 0.14);
+    color: #e8503f;
+}
+
+/* task-main now stacks text, due badge, and priority badge with a bit more gap */
+.todo-app .task-main {
+    gap: 5px;
+}
+
+@media (max-width: 600px) {
+    .todo-app .toolbar {
+        flex-wrap: wrap;
+    }
+    .todo-app .sort-select {
+        max-width: none;
+        flex: 1;
+    }
+}
+/* Scrollable task list */
+.task-list-container {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+}
+
+/* Task list */
+#task-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Custom scrollbar */
+.task-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.task-list-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.task-list-container::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 10px;
+}
+
+.task-list-container::-webkit-scrollbar-thumb:hover {
+    background: #999;
 }

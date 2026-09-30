@@ -1,6 +1,9 @@
 // ---- Element references ----
 const input = document.getElementById("task-input");
 const dueInput = document.getElementById("due-input");
+const priorityInput = document.getElementById("priority-input");
+const searchInput = document.getElementById("search-input");
+const sortSelect = document.getElementById("sort-select");
 const addBtn = document.getElementById("add-btn");
 const list = document.getElementById("task-list");
 const errorMsg = document.getElementById("error-msg");
@@ -19,6 +22,8 @@ const toastUndo = document.getElementById("toast-undo");
 
 const STORAGE_KEY = "todo-tasks";
 let currentFilter = "all";
+let currentSearch = "";
+let currentSort = "manual";
 let lastDeleted = null; // { node, next } — used by Undo
 let toastTimer = null;
 
@@ -40,22 +45,25 @@ function handleAddTask() {
     }
 
     errorMsg.textContent = "";
-    createTask(value, false, dueInput.value);
+    createTask(value, false, dueInput.value, priorityInput.value);
     saveTasks();
     input.value = "";
     dueInput.value = "";
+    priorityInput.value = "medium";
     input.focus();
+    applySort();
 }
 
 // =========================================================
 // CORE REQUIREMENT 2: Dynamic List Creation
 // =========================================================
-function createTask(text, isDone, due) {
+function createTask(text, isDone, due, priority) {
     // Create a new <li> element, insert text content, append to <ul>
     const li = document.createElement("li");
     li.draggable = true;
     if (isDone) li.classList.add("done");
     if (due) li.dataset.due = due;
+    li.dataset.priority = priority || "medium";
 
     // Drag handle
     const handle = document.createElement("button");
@@ -124,6 +132,24 @@ function createTask(text, isDone, due) {
     main.appendChild(badge);
     main.appendChild(dateEditor);
 
+    // Priority tag: click cycles Low -> Medium -> High -> Low
+    const priorityBadge = document.createElement("button");
+    priorityBadge.type = "button";
+    priorityBadge.className = "priority-badge";
+    priorityBadge.title = "Click to change priority";
+
+    priorityBadge.addEventListener("click", () => {
+        const order = ["low", "medium", "high"];
+        const current = li.dataset.priority || "medium";
+        const nextIndex = (order.indexOf(current) + 1) % order.length;
+        li.dataset.priority = order[nextIndex];
+        renderPriority(li);
+        saveTasks();
+        applySort();
+    });
+
+    main.appendChild(priorityBadge);
+
     // Bonus Feature: Delete button
     const del = document.createElement("button");
     del.className = "delete-btn";
@@ -152,6 +178,10 @@ function createTask(text, isDone, due) {
     li.addEventListener("dragstart", () => li.classList.add("dragging"));
     li.addEventListener("dragend", () => {
         li.classList.remove("dragging");
+        if (currentSort !== "manual") {
+            currentSort = "manual";
+            sortSelect.value = "manual";
+        }
         saveTasks();
     });
 
@@ -162,7 +192,17 @@ function createTask(text, isDone, due) {
 
     list.appendChild(li); // append the new <li> to the <ul>
     renderDue(li);
+    renderPriority(li);
     updateCounts();
+}
+
+function renderPriority(li) {
+    const badge = li.querySelector(".priority-badge");
+    const priority = li.dataset.priority || "medium";
+    const labels = { low: "Low", medium: "Medium", high: "High" };
+
+    badge.className = `priority-badge ${priority}`;
+    badge.textContent = labels[priority];
 }
 
 // =========================================================
@@ -310,8 +350,37 @@ list.addEventListener("dragover", (e) => {
 });
 
 // =========================================================
-// Filters (All / Active / Done)
+// Sort (Manual / Due date / Priority)
 // =========================================================
+const PRIORITY_RANK = { high: 3, medium: 2, low: 1 };
+
+function applySort() {
+    if (currentSort === "manual") return; // leave drag order as-is
+
+    const items = [...list.querySelectorAll("li")];
+
+    if (currentSort === "due") {
+        items.sort((a, b) => {
+            const aDue = a.dataset.due || "9999-99-99"; // no date sorts last
+            const bDue = b.dataset.due || "9999-99-99";
+            return aDue.localeCompare(bDue);
+        });
+    } else if (currentSort === "priority") {
+        items.sort((a, b) => {
+            const aRank = PRIORITY_RANK[a.dataset.priority || "medium"];
+            const bRank = PRIORITY_RANK[b.dataset.priority || "medium"];
+            return bRank - aRank; // High first
+        });
+    }
+
+    items.forEach((li) => list.appendChild(li)); // re-append in sorted order
+}
+
+sortSelect.addEventListener("change", () => {
+    currentSort = sortSelect.value;
+    applySort();
+    saveTasks();
+});
 function applyFilter() {
     const items = list.querySelectorAll("li");
     items.forEach((li) => {
@@ -319,10 +388,23 @@ function applyFilter() {
         let show = true;
         if (currentFilter === "active") show = !isDone;
         if (currentFilter === "done") show = isDone;
+
+        if (show && currentSearch) {
+            const text = li
+                .querySelector(".task-text")
+                .textContent.toLowerCase();
+            show = text.includes(currentSearch);
+        }
+
         li.style.display = show ? "flex" : "none";
     });
     toggleEmptyState();
 }
+
+searchInput.addEventListener("input", () => {
+    currentSearch = searchInput.value.trim().toLowerCase();
+    applyFilter();
+});
 
 filterButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -360,6 +442,7 @@ function saveTasks() {
             text: li.querySelector(".task-text").textContent,
             done: li.classList.contains("done"),
             due: li.dataset.due || "",
+            priority: li.dataset.priority || "medium",
         }));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch (err) {
@@ -372,7 +455,9 @@ function loadTasks() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
         const items = JSON.parse(raw);
-        items.forEach((item) => createTask(item.text, item.done, item.due));
+        items.forEach((item) =>
+            createTask(item.text, item.done, item.due, item.priority),
+        );
         applyFilter();
     } catch (err) {
         // Storage unavailable or corrupted — just start with an empty list
@@ -405,8 +490,22 @@ async function fetchQuote() {
     }
 }
 
-quoteBtn.addEventListener("click", fetchQuote);
+quoteBtn.addEventListener("click", () => {
+    fetchQuote();
+    restartQuoteTimer(); // manual click resets the 7s countdown
+});
 
+const QUOTE_INTERVAL_MS = 5000;
+let quoteTimer = null;
+
+function restartQuoteTimer() {
+    clearInterval(quoteTimer);
+    quoteTimer = setInterval(fetchQuote, QUOTE_INTERVAL_MS);
+}
+function myFunction() {
+    var element = document.body;
+    element.classList.toggle("dark-mode");
+}
 // =========================================================
 // Wiring
 // =========================================================
@@ -427,4 +526,6 @@ input.addEventListener("input", () => {
 // ---- Init ----
 loadTasks();
 updateCounts();
+applySort();
 fetchQuote();
+restartQuoteTimer();
