@@ -7,8 +7,8 @@ const sortSelect = document.getElementById("sort-select");
 const addBtn = document.getElementById("add-btn");
 const list = document.getElementById("task-list");
 const errorMsg = document.getElementById("error-msg");
-const countLabel = document.getElementById("count-label");
-const doneLabel = document.getElementById("done-label");
+let countLabel = document.getElementById("count-label");
+let doneLabel = document.getElementById("done-label");
 const emptyState = document.getElementById("empty-state");
 const filterButtons = document.querySelectorAll(".filter-btn");
 
@@ -421,8 +421,8 @@ filterButtons.forEach((btn) => {
 function updateCounts() {
     const items = list.querySelectorAll("li");
     const doneItems = list.querySelectorAll("li.done");
-    countLabel.textContent = `${items.length} task${items.length === 1 ? "" : "s"}`;
-    doneLabel.textContent = items.length ? `${doneItems.length} done` : "";
+    countLabel = `${items.length} task${items.length === 1 ? "" : "s"}`;
+    doneLabel = items.length ? `${doneItems.length} done` : "";
     toggleEmptyState();
 }
 
@@ -446,6 +446,7 @@ function saveTasks() {
         }));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch (err) {
+        console.log(err);
         // Storage unavailable (e.g. opened via file:// in some browsers) — skip silently
     }
 }
