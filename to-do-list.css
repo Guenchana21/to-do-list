@@ -1,13 +1,13 @@
 :root {
-    --primary: #ff6b5b;
+    --primary: #e48a80;
     --primary-dark: #e8503f;
     --teal: #17b8a6;
     --purple: #8b5cf6;
     --yellow: #ffb703;
-    --pink: #ff5da2;
-    --secondary: #eaf6f5;
-    --text-dark: #232946;
-    --text-light: #6b7189;
+    --pink: rgba(218, 210, 210, 0.582);
+    --secondary: #accfcc;
+    --text-dark: #88c5ee;
+    --text-light: #88c5ee;
     --card-bg: #ffffff;
     --shadow-sm: 0 2px 6px hsla(303, 78%, 20%, 0.08);
     --shadow-md: 0 12px 32px rgba(255, 107, 91, 0.18);
@@ -62,13 +62,17 @@ body {
    ========================= */
 
 body.night-mode {
+    --text-dark: #f1f5f9;
+    --text-light: #cbd5e1;
+    --card-bg: #202a3b;
+    --secondary: #52627a;
     background-image: url("image/starry-sun.webp");
-    color: hsl(46, 49%, 68%);
+    color: var(--text-dark);
 }
 
 body.night-mode .todo-app {
     background: rgba(15, 20, 35, 0.75);
-    color: #ffffff;
+    color: var(--text-dark);
 
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -76,34 +80,34 @@ body.night-mode .todo-app {
 body.night-mode .todo-app h1 {
     color: #ffffff;
     background: none;
-    -webkit-text-fill-color: #ffffff;
+    -webkit-text-fill-color: #f1f5f9;
 }
 
 body.night-mode #task-input,
 body.night-mode #due-input,
 body.night-mode #priority-input,
 body.night-mode .search-input {
-    background: hsla(180, 10%, 94%, 0);
-    color: #ffffff;
-    border-color: #c0b7b744;
+    background: rgba(22, 30, 45, 0.9);
+    color: #fffefe;
+    border-color: #718096;
 }
 
 body.night-mode #task-input::placeholder,
 body.night-mode .search-input::placeholder {
-    color: #aaa;
+    color: #fdfdfd;
 }
 
 body.night-mode #task-list li {
-    background: #2a2a2a0e;
-    color: #ffffff;
+    background: #2a2a2a96;
+    color: #f1f5f9;
 }
 
-body.night-mode .task-text {
-    color: #ffffff;
+body.night-mode .search-input::placeholder {
+    color: #cbd5e1;
 }
 
 body.night-mode .quote-box {
-    border-color: none;
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 body.night-mode .quote-text {
@@ -156,12 +160,12 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     margin: 20px;
     padding: 42px 38px;
     color: var(--text-dark);
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border-radius: 16px;
     box-shadow: var(--shadow-md);
-    border: 1px solid rgba(35, 41, 70, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     position: relative;
     overflow: hidden;
 }
@@ -220,7 +224,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 }
 
 .todo-app .quote-text {
-    font-size: 15px;
+    font-size: 20px;
     font-style: italic;
     color: var(--text-dark);
     margin: 0 0 4px;
@@ -268,10 +272,10 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 }
 
 .todo-app .filter-btn {
-    background: var(--secondary);
+    background: #0b1212;
     border: none;
-    color: var(--text-light);
-    font-size: 13px;
+    color: var(--text-dark);
+    font-size: 15px;
     font-weight: 700;
     padding: 8px 16px;
     border-radius: 999px;
@@ -287,7 +291,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app .filter-btn.active {
     background: linear-gradient(135deg, var(--primary), var(--pink));
-    color: #ffffff;
+    color: #0c0303;
 }
 
 .todo-app h1 {
@@ -310,12 +314,12 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app #task-input {
     flex: 1;
-    background: #fbfaf8;
+    background: hwb(218 66% 30% / 0.068);
     border: 2px solid var(--secondary);
     border-radius: 14px;
     padding: 18px 20px;
     font-size: 19px;
-    color: var(--text-dark);
+    color: rgb(17, 1, 1);
     outline: none;
     min-width: 0;
     transition:
@@ -325,8 +329,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 }
 
 .todo-app #task-input::placeholder {
-    color: var(--text-light);
-    opacity: 0.7;
+    color: #dac9c4;
 }
 
 .todo-app #task-input:focus {
@@ -337,7 +340,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app #task-input.shake {
     animation: todo-shake 0.32s ease;
-    border-color: #c0392b;
+    border-color: #7dddd5;
     box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.15);
 }
 
@@ -424,9 +427,10 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app #task-list li {
     display: flex;
+    height: 200%;
     align-items: center;
     gap: 12px;
-    background: #fbfaf8;
+    background: hwb(60.92deg 83.71% 10.09% / 12%);
     border: 1.5px solid transparent;
     border-left: 4px solid var(--accent, var(--primary));
     border-radius: 16px;
@@ -544,8 +548,8 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app li.done .task-text {
     text-decoration: line-through;
-    color: var(--text-light);
-    font-weight: 400;
+    color: lightgreen;
+    font-weight: 350px;
 }
 
 .todo-app .delete-btn {
@@ -650,13 +654,14 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 }
 
 .todo-app .due-badge {
+    height: 24px;
     display: none;
     align-self: flex-start;
-    font-size: 12px;
+    font-size: 17px;
     font-weight: 700;
     padding: 3px 10px;
     border-radius: 999px;
-    background: var(--secondary);
+    background: black;
     color: var(--text-light);
 }
 
@@ -749,10 +754,18 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 /* task has no date yet */
 .todo-app .due-badge.empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
     background: transparent;
     border: 1.5px dashed var(--text-light);
+    border-radius: 999px;
+    padding: 4px 12px;
     color: var(--text-light);
     opacity: 0.55;
+    white-space: nowrap;
+    box-sizing: border-box;
 }
 
 .todo-app .due-badge.empty:hover {
@@ -788,27 +801,62 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
-    color: var(--text-light);
+    color: #34aeeb;
 }
 
 .todo-app #due-input,
 .todo-app #priority-input {
     font-family: inherit;
-    font-size: 14px;
-    color: var(--text-dark);
-    background: #fbfaf8;
+    font-size: 15px;
+    font-weight: 700;
+    color: #88c5ee;
+
+    background: rgba(255, 255, 255, 0.11);
     border: 2px solid var(--secondary);
     border-radius: 10px;
-    padding: 6px 10px;
+
+    padding: 8px 32px 8px 12px;
+
     outline: none;
     cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.todo-app #priority-input option {
+    background: #ffffff;
+    color: #222222;
+    font-weight: 600;
+}
+
+.todo-app #priority-input option[value="low"] {
+    color: #0e8577;
+}
+
+.todo-app #priority-input option[value="medium"] {
+    color: #b07a00;
+}
+
+.todo-app #priority-input option[value="high"] {
+    color: #e8503f;
+}
+.todo-app #priority-input:hover {
+    border-color: var(--primary);
+}
+
+.todo-app #priority-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(228, 138, 128, 0.15);
 }
 
 .todo-app #due-input:focus,
 .todo-app #priority-input:focus {
-    border-color: var(--primary);
+    border-color: black;
 }
 
 /* Search + sort toolbar */
@@ -822,12 +870,12 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     flex: 1;
     min-width: 0;
     font-family: inherit;
-    font-size: 14px;
-    color: var(--text-dark);
-    background: #fbfaf8;
+    font-size: 16px;
+    color: white;
+    background: hwb(218 66% 30% / 0.26);
     border: 2px solid var(--secondary);
     border-radius: 12px;
-    padding: 10px 14px;
+    padding: 13px 17px;
     outline: none;
     transition:
         border-color 0.2s ease,
@@ -835,8 +883,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 }
 
 .todo-app .search-input::placeholder {
-    color: var(--text-light);
-    opacity: 0.7;
+    color: #d3d9dd;
 }
 
 .todo-app .search-input:focus {
@@ -846,10 +893,10 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app .sort-select {
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-dark);
-    background: var(--secondary);
+    background: hwb(218 66% 30% / 0.26);
     border: 2px solid transparent;
     border-radius: 12px;
     padding: 10px 12px;
@@ -865,11 +912,12 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 /* Priority tag on each task */
 .todo-app .priority-badge {
     display: inline-block;
+    height: 30px;
     align-self: flex-start;
     border: none;
     font-family: inherit;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 17px;
     font-weight: 700;
     padding: 3px 10px;
     border-radius: 999px;
@@ -883,12 +931,12 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app .priority-badge.low {
     background: rgba(23, 184, 166, 0.15);
-    color: #0e8577;
+    color: #72c710;
 }
 
 .todo-app .priority-badge.medium {
     background: rgba(255, 183, 3, 0.18);
-    color: #b07a00;
+    color: #03010e;
 }
 
 .todo-app .priority-badge.high {
@@ -908,6 +956,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     .todo-app .sort-select {
         max-width: none;
         flex: 1;
+        color: black;
     }
 }
 /* Scrollable task list */

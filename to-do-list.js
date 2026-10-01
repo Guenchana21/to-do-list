@@ -454,9 +454,9 @@ function myFunction() {
     const button = document.getElementById("mode-btn");
     body.classList.toggle("night-mode");
     if (body.classList.contains("night-mode")) {
-        button.textContent = "🌙 Dark Mode";
+        button.textContent = "Light Mode";
     } else {
-        button.textContent = "☀️ Light Mode";
+        button.textContent = "Dark Mode";
     }
 }
 function loadTasks() {
