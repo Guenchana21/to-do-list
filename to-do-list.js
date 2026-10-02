@@ -20,7 +20,8 @@ const toast = document.getElementById("toast");
 const toastMsg = document.getElementById("toast-msg");
 const toastUndo = document.getElementById("toast-undo");
 
-const STORAGE_KEY = "todo-tasks";
+const MORNING_STORAGE_KEY = "morning-tasks";
+const NIGHT_STORAGE_KEY = "night-tasks";
 let currentFilter = "all";
 let currentSearch = "";
 let currentSort = "manual";
@@ -53,7 +54,11 @@ function handleAddTask() {
     input.focus();
     applySort();
 }
-
+function getCurrentStorageKey() {
+    return document.body.classList.contains("night-mode")
+        ? NIGHT_STORAGE_KEY
+        : MORNING_STORAGE_KEY;
+}
 // =========================================================
 // CORE REQUIREMENT 2: Dynamic List Creation
 // =========================================================
@@ -444,33 +449,68 @@ function saveTasks() {
             due: li.dataset.due || "",
             priority: li.dataset.priority || "medium",
         }));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+
+        localStorage.setItem(getCurrentStorageKey(), JSON.stringify(items));
     } catch (err) {
         console.log(err);
-        // Storage unavailable (e.g. opened via file:// in some browsers) — skip silently
     }
 }
 function myFunction() {
     const body = document.body;
     const button = document.getElementById("mode-btn");
+
+    // Save the current mode's tasks before switching
+    saveTasks();
+
+    // Switch mode
     body.classList.toggle("night-mode");
+
+    // Update button text
     if (body.classList.contains("night-mode")) {
-        button.textContent = "Light Mode";
+        button.textContent = "Morning Mode";
     } else {
-        button.textContent = "Dark Mode";
+        button.textContent = "Night Mode";
     }
+
+    // Clear currently displayed tasks
+    list.innerHTML = "";
+
+    // Reset filters
+    currentFilter = "all";
+    currentSearch = "";
+
+    filterButtons.forEach((btn) => {
+        btn.classList.remove("active");
+
+        if (btn.dataset.filter === "all") {
+            btn.classList.add("active");
+        }
+    });
+
+    searchInput.value = "";
+
+    // Load tasks belonging to the new mode
+    loadTasks();
+
+    updateCounts();
+    applySort();
+    applyFilter();
 }
 function loadTasks() {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(getCurrentStorageKey());
+
         if (!raw) return;
+
         const items = JSON.parse(raw);
+
         items.forEach((item) =>
             createTask(item.text, item.done, item.due, item.priority),
         );
+
         applyFilter();
     } catch (err) {
-        // Storage unavailable or corrupted — just start with an empty list
+        console.log(err);
     }
 }
 
