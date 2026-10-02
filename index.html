@@ -14,7 +14,7 @@
                     <h1>To-Do List</h1>
 
                     <button id="mode-btn" onclick="myFunction()">
-                        Night Mode
+                        Dark Mode
                     </button>
                 </div>
             </header>
@@ -36,10 +36,7 @@
                     placeholder="Add a task..."
                     autocomplete="off"
                 />
-                <button id="add-btn">Add</button>
             </div>
-
-            <!-- DUE DATE + PRIORITY (optional) -->
             <div class="due-row">
                 <label for="due-input">
                     Due date
@@ -53,7 +50,12 @@
                         <option value="high">High</option>
                     </select>
                 </label>
+                <div class="add-btn-container">
+                    <button id="add-btn">Add</button>
+                </div>
             </div>
+
+            <!-- DUE DATE + PRIORITY (optional) -->
 
             <p class="error-msg" id="error-msg"></p>
 
@@ -99,6 +101,7 @@
                     Done
                 </button>
             </div>
+
             <div class="task-list-container">
                 <ul id="task-list"></ul>
 
