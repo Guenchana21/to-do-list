@@ -427,7 +427,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app #task-list li {
     display: flex;
-    height: 200%;
+    height: 300%;
     align-items: center;
     gap: 12px;
     background: hwb(60.92deg 83.71% 10.09% / 12%);
@@ -538,8 +538,10 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 
 .todo-app .task-text {
     flex: 1;
-    font-size: 20px;
-    line-height: 1.5;
+    font-size: 30px;
+    cursor: pointer;
+
+    line-height: 1;
     word-break: break-word;
     color: var(--text-dark);
     font-weight: 500;
@@ -640,21 +642,18 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     border-color: var(--primary);
 }
 
-/* TASK TEXT + DUE BADGE */
 .todo-app .task-main {
     flex: 1;
     min-width: 0;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    justify-content: center;
+    flex-direction: row; /* Changed from column to row */
+    align-items: center; /* Added to vertically center the items */
+    gap: 15px; /* This now acts as horizontal spacing */
+    flex-wrap: wrap; /* Optional: allows wrapping on very small screens so they don't overflow */
 }
-
-.todo-app .task-text {
-    cursor: text;
-}
-
 .todo-app .due-badge {
-    height: 24px;
+    height: 40px;
     display: none;
     align-self: flex-start;
     font-size: 17px;
@@ -732,10 +731,6 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     padding: 7px 16px;
     font-weight: 700;
     cursor: pointer;
-}
-/* CLICKABLE DUE-DATE BADGE */
-.todo-app .task-main {
-    position: relative;
 }
 
 .todo-app .due-badge {
@@ -944,11 +939,62 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
     color: #e8503f;
 }
 
-/* task-main now stacks text, due badge, and priority badge with a bit more gap */
-.todo-app .task-main {
-    gap: 5px;
+/* =========================================================
+   STATUS BADGE (Pending / In Progress / On Hold / Done)
+   Click cycles through all four.
+   ========================================================= */
+
+.todo-app .status-badge {
+    flex: none;
+    align-self: center;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 15px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
 }
 
+.todo-app .status-badge:hover {
+    transform: translateY(-1px);
+}
+
+.todo-app .status-badge.pending {
+    background: var(--secondary);
+    color: var(--text-light);
+}
+
+.todo-app .status-badge.in-progress {
+    background: rgba(23, 184, 166, 0.18);
+    color: #0e8577;
+}
+
+.todo-app .status-badge.on-hold {
+    background: rgba(255, 183, 3, 0.18);
+    color: #b07a00;
+}
+
+.todo-app .status-badge.done {
+    background: var(--accent, var(--primary));
+    color: #ffffff;
+}
+
+/* Filter tabs: now 5 across, so let them wrap on narrow screens */
+.todo-app .filters {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 420px) {
+    .todo-app .status-badge {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
 @media (max-width: 600px) {
     .todo-app .toolbar {
         flex-wrap: wrap;
@@ -961,7 +1007,7 @@ body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
 }
 /* Scrollable task list */
 .task-list-container {
-    max-height: 500px;
+    max-height: 700px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 8px;

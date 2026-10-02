@@ -19,7 +19,6 @@
                 </div>
             </header>
 
-            <!-- QUOTE WIDGET (Homework: Fetch Motivational Quotes) -->
             <div class="quote-box" id="quote-box">
                 <p class="quote-text" id="quote-text">
                     Click "New Quote" for a little motivation.
@@ -83,14 +82,23 @@
                 >
                     All
                 </button>
-                <button class="filter-btn" data-filter="active" type="button">
-                    Active
+                <button class="filter-btn" data-filter="pending" type="button">
+                    Pending
+                </button>
+                <button
+                    class="filter-btn"
+                    data-filter="in-progress"
+                    type="button"
+                >
+                    In Progress
+                </button>
+                <button class="filter-btn" data-filter="on-hold" type="button">
+                    On Hold
                 </button>
                 <button class="filter-btn" data-filter="done" type="button">
                     Done
                 </button>
             </div>
-
             <div class="task-list-container">
                 <ul id="task-list"></ul>
 
