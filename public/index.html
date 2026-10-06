@@ -22,31 +22,11 @@
                         aria-label="Switch to dark mode"
                         title="Switch to dark mode"
                     >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M20.4 15.5A8.5 8.5 0 0 1 8.5 3.6 8.5 8.5 0 1 0 20.4 15.5Z"></path>
+                        <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
                         </svg>
                     </button>
-                </div>
-                <div class="profile-bar">
-                    <label for="profile-select">Local profile</label>
-                    <select id="profile-select" aria-label="Choose local profile">
-                        <option value="default">My profile</option>
-                    </select>
-                    <button id="add-profile-btn" type="button">+ New profile</button>
-                    <form id="profile-form" class="profile-form" hidden>
-                        <label class="visually-hidden" for="profile-name-input">
-                            Profile name
-                        </label>
-                        <input
-                            id="profile-name-input"
-                            type="text"
-                            maxlength="40"
-                            placeholder="Profile name"
-                            autocomplete="off"
-                        />
-                        <button type="submit">Save</button>
-                        <button id="cancel-profile-btn" type="button">Cancel</button>
-                    </form>
                 </div>
             </header>
 

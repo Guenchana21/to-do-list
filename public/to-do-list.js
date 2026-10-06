@@ -5,11 +5,6 @@ const priorityInput = document.getElementById("priority-input");
 const searchInput = document.getElementById("search-input");
 const sortSelect = document.getElementById("sort-select");
 const addBtn = document.getElementById("add-btn");
-const profileSelect = document.getElementById("profile-select");
-const addProfileBtn = document.getElementById("add-profile-btn");
-const profileForm = document.getElementById("profile-form");
-const profileNameInput = document.getElementById("profile-name-input");
-const cancelProfileBtn = document.getElementById("cancel-profile-btn");
 const list = document.getElementById("task-list");
 const errorMsg = document.getElementById("error-msg");
 let countLabel = document.getElementById("count-label");
@@ -27,11 +22,7 @@ const toastUndo = document.getElementById("toast-undo");
 
 const MORNING_STORAGE_KEY = "morning-tasks";
 const NIGHT_STORAGE_KEY = "night-tasks";
-const PROFILES_STORAGE_KEY = "todo-profiles";
 const ACTIVE_PROFILE_STORAGE_KEY = "todo-active-profile";
-const DEFAULT_PROFILE = { id: "default", name: "My profile" };
-let profiles = [DEFAULT_PROFILE];
-let activeProfileId = DEFAULT_PROFILE.id;
 let currentFilter = "all";
 let currentSearch = "";
 let currentSort = "manual";
@@ -64,12 +55,9 @@ function handleAddTask() {
 }
 
 function getCurrentStorageKey() {
-    const themeKey = document.body.classList.contains("night-mode")
+    return document.body.classList.contains("night-mode")
         ? NIGHT_STORAGE_KEY
         : MORNING_STORAGE_KEY;
-    return activeProfileId === DEFAULT_PROFILE.id
-        ? themeKey
-        : `${activeProfileId}-${themeKey}`;
 }
 
 // =========================================================
@@ -533,16 +521,16 @@ function myFunction() {
 
     if (body.classList.contains("night-mode")) {
         button.innerHTML = `
-            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="4"></circle>
-                <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.4 15.5A8.5 8.5 0 0 1 8.5 3.6 8.5 8.5 0 1 0 20.4 15.5Z"></path>
             </svg>`;
         button.setAttribute("aria-label", "Switch to light mode");
         button.title = "Switch to light mode";
     } else {
         button.innerHTML = `
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M20.4 15.5A8.5 8.5 0 0 1 8.5 3.6 8.5 8.5 0 1 0 20.4 15.5Z"></path>
+            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
             </svg>`;
         button.setAttribute("aria-label", "Switch to dark mode");
         button.title = "Switch to dark mode";
@@ -593,102 +581,43 @@ function loadTasks() {
 
 }
 
-function initializeProfiles() {
+function migrateActiveProfileTasks() {
     try {
-        const storedProfiles = JSON.parse(
-            localStorage.getItem(PROFILES_STORAGE_KEY) || "null",
-        );
-        if (Array.isArray(storedProfiles)) {
-            profiles = storedProfiles.filter(
-                (profile) =>
-                    profile &&
-                    typeof profile.id === "string" &&
-                    typeof profile.name === "string",
-            );
-        }
-        if (!profiles.some((profile) => profile.id === DEFAULT_PROFILE.id)) {
-            profiles.unshift(DEFAULT_PROFILE);
-        }
+        const activeProfileId = localStorage.getItem(ACTIVE_PROFILE_STORAGE_KEY);
+        if (!activeProfileId || !activeProfileId.startsWith("profile-")) return;
 
-        const requestedProfile = localStorage.getItem(ACTIVE_PROFILE_STORAGE_KEY);
-        activeProfileId = profiles.some((profile) => profile.id === requestedProfile)
-            ? requestedProfile
-            : DEFAULT_PROFILE.id;
-        renderProfiles();
+        for (const themeKey of [MORNING_STORAGE_KEY, NIGHT_STORAGE_KEY]) {
+            const sourceKey = `${activeProfileId}-${themeKey}`;
+            const migrationKey = `todo-migrated-${sourceKey}`;
+            if (localStorage.getItem(migrationKey)) continue;
+
+            const sourceValue = localStorage.getItem(sourceKey);
+            if (sourceValue !== null) {
+                const sourceTasks = JSON.parse(sourceValue);
+                if (!Array.isArray(sourceTasks)) {
+                    throw new Error(`Stored tasks for ${sourceKey} are not a list.`);
+                }
+
+                const destinationValue = localStorage.getItem(themeKey);
+                const destinationTasks = destinationValue
+                    ? JSON.parse(destinationValue)
+                    : [];
+                if (!Array.isArray(destinationTasks)) {
+                    throw new Error(`Stored tasks for ${themeKey} are not a list.`);
+                }
+                localStorage.setItem(
+                    themeKey,
+                    JSON.stringify([...destinationTasks, ...sourceTasks]),
+                );
+            }
+            localStorage.setItem(migrationKey, "true");
+        }
     } catch (err) {
-        errorMsg.textContent = "Could not load local profiles from this browser.";
-        console.error("Could not load local profiles.", err);
+        errorMsg.textContent =
+            "Could not move tasks from the selected local profile. Your saved data is unchanged.";
+        console.error("Could not migrate local profile tasks.", err);
     }
 }
-
-function renderProfiles() {
-    profileSelect.replaceChildren();
-    profiles.forEach((profile) => {
-        const option = document.createElement("option");
-        option.value = profile.id;
-        option.textContent = profile.name;
-        profileSelect.appendChild(option);
-    });
-    profileSelect.value = activeProfileId;
-}
-
-profileSelect.addEventListener("change", () => {
-    saveTasks();
-    activeProfileId = profileSelect.value;
-    localStorage.setItem(ACTIVE_PROFILE_STORAGE_KEY, activeProfileId);
-    list.replaceChildren();
-    loadTasks();
-    updateCounts();
-    applySort();
-    applyFilter();
-});
-
-addProfileBtn.addEventListener("click", () => {
-    profileForm.hidden = !profileForm.hidden;
-    if (!profileForm.hidden) profileNameInput.focus();
-});
-
-cancelProfileBtn.addEventListener("click", () => {
-    profileForm.hidden = true;
-    profileNameInput.value = "";
-    errorMsg.textContent = "";
-});
-
-profileForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const cleanName = profileNameInput.value.trim();
-    if (!cleanName) {
-        errorMsg.textContent = "Please enter a name for the profile.";
-        return;
-    }
-    if (profiles.some((profile) => profile.name.toLowerCase() === cleanName.toLowerCase())) {
-        errorMsg.textContent = "A profile with that name already exists.";
-        return;
-    }
-
-    const profile = {
-        id: `profile-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        name: cleanName,
-    };
-    const updatedProfiles = [...profiles, profile];
-    try {
-        localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(updatedProfiles));
-        localStorage.setItem(ACTIVE_PROFILE_STORAGE_KEY, profile.id);
-        profiles = updatedProfiles;
-        activeProfileId = profile.id;
-        renderProfiles();
-        list.replaceChildren();
-        updateCounts();
-        applySort();
-        applyFilter();
-        profileForm.reset();
-        profileForm.hidden = true;
-        errorMsg.textContent = "";
-    } catch (err) {
-        errorMsg.textContent = "Could not save this profile in local storage.";
-        console.error("Could not save local profile.", err);
-    }
-});
 
 // =========================================================
 // Motivational Quotes
@@ -747,7 +676,7 @@ input.addEventListener("input", () => {
 });
 
 // ---- Init ----
-initializeProfiles();
+migrateActiveProfileTasks();
 loadTasks();
 updateCounts();
 applySort();
