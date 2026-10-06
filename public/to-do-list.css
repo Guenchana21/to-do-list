@@ -1,5 +1,5 @@
-/* =========================================================
-   MOBILE-FIRST CSS — drop-in replacement
+﻿/* =========================================================
+   MODERN TASK APP REDESIGN
    ========================================================= */
 
 *,
@@ -9,32 +9,25 @@
 }
 
 :root {
-    --primary: #e48a80;
-    --primary-dark: #e8503f;
-    --teal: #17b8a6;
-    --purple: #8b5cf6;
-    --yellow: #ffb703;
-    --pink: rgba(218, 210, 210, 0.582);
-    --secondary: #accfcc;
-    --text-dark: #1e293b;
-    --text-light: #475569;
-    --card-bg: #ffffff;
-    --shadow-sm: 0 2px 6px hsla(303, 78%, 20%, 0.08);
-    --shadow-md: 0 12px 32px rgba(255, 107, 91, 0.18);
-}
-
-/* Color rotation for task accents/checkboxes — cycles every 4 tasks */
-.todo-app #task-list li:nth-child(4n + 1) {
-    --accent: var(--primary);
-}
-.todo-app #task-list li:nth-child(4n + 2) {
-    --accent: var(--teal);
-}
-.todo-app #task-list li:nth-child(4n + 3) {
-    --accent: var(--purple);
-}
-.todo-app #task-list li:nth-child(4n + 4) {
-    --accent: var(--pink);
+    --bg-1: #edf4ff;
+    --bg-2: #f9efe8;
+    --surface: rgba(255, 255, 255, 0.58);
+    --surface-strong: rgba(255, 255, 255, 0.82);
+    --border: rgba(148, 163, 184, 0.34);
+    --shadow: 0 24px 60px rgba(79, 95, 143, 0.18);
+    --primary: #7c6cf7;
+    --primary-strong: #5d4ce2;
+    --secondary: #ff8d7d;
+    --mint: #65d7c7;
+    --sun: #f6c76d;
+    --text: #1d2433;
+    --muted: #536277;
+    --soft: rgba(124, 108, 247, 0.1);
+    --success: #1ea672;
+    --warning: #c67b00;
+    --danger: #db5d50;
+    --dark-surface: rgba(17, 24, 39, 0.8);
+    --dark-border: rgba(148, 163, 184, 0.2);
 }
 
 html,
@@ -45,511 +38,384 @@ body {
 body {
     min-height: 100vh;
     margin: 0;
+    padding: 22px 14px 40px;
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 16px 12px 32px;
-    background-image: url("night-sky.webp");
+    font-family: Inter, "Segoe UI", sans-serif;
+    color: var(--text);
+    background-image:
+        linear-gradient(rgba(239, 245, 255, 0.18), rgba(255, 242, 231, 0.2)),
+        url("night-sky.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    transition: background-image 0.5s ease;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: var(--text-dark);
-    font-size: 16px;
-    line-height: 1.4;
+    transition: background-image 0.25s ease;
 }
 
-/* =========================
-   DARK MODE
-   ========================= */
-body.night-mode {
-    --text-dark: #f1f5f9;
-    --text-light: #cbd5e1;
-    --card-bg: #202a3b;
-    --secondary: #52627a;
-    background-image: url("starry-sun.webp");
-    color: var(--text-dark);
-}
-body.night-mode .todo-app {
-    background: rgba(15, 20, 35, 0.85);
-    color: var(--text-dark);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-body.night-mode .todo-app h1 {
-    color: #ffffff;
-    background: none;
-    -webkit-text-fill-color: #f1f5f9;
-}
-body.night-mode #task-input,
-body.night-mode #due-input,
-body.night-mode #priority-input,
-body.night-mode .search-input {
-    background: rgba(22, 30, 45, 0.9);
-    color: #fffefe;
-    border-color: #718096;
-}
-body.night-mode #task-input::placeholder,
-body.night-mode .search-input::placeholder {
-    color: #fdfdfd;
-}
-body.night-mode #task-list li {
-    background: #2a2a2a96;
-    color: #f1f5f9;
-}
-body.night-mode .quote-box {
-    border-color: rgba(255, 255, 255, 0.25);
-}
-body.night-mode .quote-text {
-    color: #ffffff;
-}
-body.night-mode .quote-btn {
-    background: #2a2a2a;
-    color: #b9a0ff;
-}
-body.night-mode .filter-btn {
-    background: #2a2a2a;
-    color: #cccccc;
-}
-body.night-mode .sort-select {
-    background: #2a2a2a;
-    color: #ffffff;
-}
-body.night-mode .empty-state {
-    background: #252525;
-    border-color: #444;
-}
-body.night-mode .task-list-container::-webkit-scrollbar-track {
-    background: #222;
-}
-body.night-mode .task-list-container::-webkit-scrollbar-thumb {
-    background: #555;
-}
-body.night-mode .task-list-container::-webkit-scrollbar-thumb:hover {
-    background: #777;
-}
-body.night-mode #mode-btn {
-    background: #334155;
-    color: #f1f5f9;
+button,
+input,
+select {
+    font: inherit;
 }
 
-#mode-btn {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    background: #e2e8f0;
-    color: #1e293b;
-}
-
-/* =========================
-   APP CONTAINER
-   ========================= */
 .todo-app {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 24px 16px;
-    color: var(--text-dark);
-    background: rgba(255, 255, 255, 0.301);
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    border-radius: 20px;
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: min(1120px, 100%);
+    padding: 26px 18px 18px;
     position: relative;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
     overflow: hidden;
 }
+
 .todo-app::before {
     content: "";
     position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 160px;
-    height: 160px;
+    inset: auto -80px -110px auto;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--yellow), var(--pink));
-    opacity: 0.15;
+    background: radial-gradient(circle, rgba(255, 141, 125, 0.24), transparent 70%);
     pointer-events: none;
 }
 
-/* =========================
-   LOGO / HEADER
-   ========================= */
 .logo {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-}
-.logo button {
-    background: linear-gradient(135deg, var(--primary), var(--pink));
-    border: none;
-    cursor: pointer;
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 8px 14px;
-    border-radius: 999px;
-    white-space: nowrap;
-    transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        transform 0.15s ease;
-}
-.logo button:hover {
-    background: linear-gradient(135deg, var(--yellow), var(--primary));
-    transform: translateY(-1px);
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
 }
 
-.todo-app header {
-    margin-bottom: 20px;
-    position: relative;
+.brand-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(124, 108, 247, 0.08);
+    color: var(--primary-strong);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
 .todo-app h1 {
-    font-size: 28px;
-    line-height: 1.2;
-    margin: 0 0 12px 0;
-    font-weight: 800;
-    color: var(--text-dark);
-    background: linear-gradient(135deg, var(--text-dark), var(--purple));
+    margin: 0;
+    font-size: clamp(2.1rem, 5vw, 4rem);
+    line-height: 0.96;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    background: linear-gradient(120deg, var(--primary-strong), var(--secondary), #8c7cf4);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
-/* =========================
-   QUOTE WIDGET
-   ========================= */
-.todo-app .quote-box {
-    background: linear-gradient(
-        135deg,
-        rgba(255, 107, 91, 0.06),
-        rgba(139, 92, 246, 0.06)
-    );
-    border: 1.5px dashed rgba(139, 92, 246, 0.25);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 20px;
-    text-align: left;
-}
-.todo-app .quote-text {
-    font-size: 17px;
-    font-style: italic;
-    color: var(--text-dark);
-    margin: 0 0 4px;
-    line-height: 1.5;
-}
-.todo-app .quote-author {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--purple);
-    margin: 0 0 10px;
-    min-height: 16px;
-}
-.todo-app .quote-btn {
-    background: #ffffff;
-    border: 1.5px solid var(--purple);
-    color: var(--purple);
-    font-size: 12px;
-    font-weight: 700;
-    padding: 8px 16px;
-    border-radius: 999px;
+#mode-btn {
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    border: 1px solid rgba(124, 108, 247, 0.24);
+    background: linear-gradient(135deg, #fff5d8, #ffe5dc);
+    color: #7c5bda;
+    border-radius: 16px;
     cursor: pointer;
-    transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        opacity 0.15s ease;
-}
-.todo-app .quote-btn:hover {
-    background: var(--purple);
-    color: #ffffff;
-}
-.todo-app .quote-btn:disabled {
-    opacity: 0.6;
-    cursor: default;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-/* =========================
-   COMPOSER
-   ========================= */
-.todo-app .composer {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 8px;
+#mode-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
 }
+
+#mode-btn svg.sun-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+#mode-btn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #ffe9a8, #ffd2c9);
+}
+
+.todo-app .quote-box {
+    position: relative;
+    z-index: 1;
+    margin: 18px 0 22px;
+    padding: 18px 18px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(124, 108, 247, 0.18);
+    background: linear-gradient(135deg, rgba(124, 108, 247, 0.08), rgba(255, 141, 125, 0.06));
+}
+
+.todo-app .quote-text {
+    margin: 0 0 8px;
+    font-size: 1.08rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+.todo-app .quote-author {
+    margin: 0 0 12px;
+    color: var(--primary-strong);
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    min-height: 1em;
+}
+
+.todo-app .quote-btn {
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 9px 18px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(124, 108, 247, 0.22);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.todo-app .quote-btn:hover {
+    transform: translateY(-1px);
+}
+
+.todo-app .quote-btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.todo-app .composer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 .todo-app #task-input {
     width: 100%;
-    background: hwb(218 66% 30% / 0.068);
-    border: 2px solid var(--secondary);
-    border-radius: 14px;
-    padding: 16px;
-    font-size: 17px;
-    color: #111;
-    outline: none;
     min-width: 0;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-.todo-app #task-input::placeholder {
-    color: #dac9c4;
-}
-.todo-app #task-input:focus {
-    border-color: var(--primary);
-    background: var(--card-bg);
-    box-shadow: 0 0 0 4px rgba(255, 107, 91, 0.15);
-}
-.todo-app #task-input.shake {
-    animation: todo-shake 0.32s ease;
-    border-color: #7dddd5;
-    box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.15);
-}
-@keyframes todo-shake {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-    25% {
-        transform: translateX(-5px);
-    }
-    50% {
-        transform: translateX(5px);
-    }
-    75% {
-        transform: translateX(-5px);
-    }
-}
-.todo-app #add-btn {
-    background: linear-gradient(135deg, var(--primary), var(--pink));
-    color: #f5f3f3;
-    border: none;
-    border-radius: 14px;
-    padding: 18px;
-    font-size: 20px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(185, 62, 48, 0.4);
-    width: 100%;
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        opacity 0.15s ease;
-}
-.todo-app #add-btn:hover {
-    transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 10px 24px rgba(255, 107, 91, 0.5);
-}
-.todo-app #add-btn:active {
-    transform: translateY(0) scale(0.98);
-    opacity: 0.92;
-}
-.todo-app .error-msg {
-    font-size: 15px;
-    color: #e8503f;
-    min-height: 18px;
-    margin: 8px 0 4px 2px;
-    font-weight: 600;
+    border: 1.5px solid rgba(116, 136, 163, 0.4);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 17px 18px;
+    font-size: 1.05rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* =========================
-   DUE + PRIORITY ROW
-   ========================= */
+.todo-app #task-input::placeholder {
+    color: rgba(83, 98, 119, 0.7);
+}
+
+.todo-app #task-input:focus,
+.todo-app .search-input:focus,
+.todo-app #due-input:focus,
+.todo-app #priority-input:focus,
+.todo-app .sort-select:focus {
+    border-color: rgba(124, 108, 247, 0.8);
+    box-shadow: 0 0 0 5px rgba(124, 108, 247, 0.12);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.todo-app #task-input.shake {
+    animation: todo-shake 0.32s ease;
+    border-color: rgba(219, 93, 80, 0.75);
+    box-shadow: 0 0 0 5px rgba(219, 93, 80, 0.12);
+}
+
+@keyframes todo-shake {
+    0%,
+    100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+}
+
+.todo-app #add-btn {
+    flex: none;
+    min-width: 110px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--secondary), #f39c81);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 800;
+    padding: 16px 20px;
+    cursor: pointer;
+    box-shadow: 0 16px 28px rgba(255, 141, 125, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.todo-app #add-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 20px 30px rgba(255, 141, 125, 0.28);
+}
+
+.todo-app .error-msg {
+    position: relative;
+    z-index: 1;
+    min-height: 1.2em;
+    margin: 8px 4px 0;
+    color: var(--danger);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
 .todo-app .due-row {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: 12px;
-    margin: 10px 2px 0;
+    margin-top: 8px;
 }
+
 .todo-app .due-row label {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #34aeeb;
-    flex: 1 1 auto;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--muted);
+    flex: 1 1 180px;
 }
+
+.todo-app #due-input,
+.todo-app #priority-input,
+.todo-app .search-input,
+.todo-app .sort-select {
+    border: 1.5px solid rgba(116, 136, 163, 0.4);
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 14px;
+    color: var(--text);
+    outline: none;
+    min-height: 48px;
+    padding: 0 14px;
+    font-weight: 600;
+}
+
 .todo-app #due-input,
 .todo-app #priority-input {
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    color: #1e293b;
-    background: rgba(255, 255, 255, 0.6);
-    border: 2px solid var(--secondary);
-    border-radius: 12px;
-    padding: 10px 12px;
-    outline: none;
-    cursor: pointer;
     width: 100%;
-    max-width: 100%;
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
 }
+
 .todo-app #priority-input option {
-    background: #ffffff;
-    color: #222222;
-    font-weight: 600;
-}
-.todo-app #priority-input option[value="low"] {
-    color: #0e8577;
-}
-.todo-app #priority-input option[value="medium"] {
-    color: #b07a00;
-}
-.todo-app #priority-input option[value="high"] {
-    color: #e8503f;
-}
-.todo-app #priority-input:hover {
-    border-color: var(--primary);
-}
-.todo-app #priority-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(228, 138, 128, 0.15);
-}
-.todo-app #due-input:focus,
-.todo-app #priority-input:focus {
-    border-color: black;
+    background: white;
+    color: var(--text);
 }
 
-/* =========================
-   TOOLBAR (search + sort)
-   ========================= */
 .todo-app .toolbar {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 18px 0 4px;
+    gap: 12px;
+    margin-top: 18px;
 }
+
 .todo-app .search-input {
-    flex: 1 1 100%;
+    flex: 1 1 220px;
     min-width: 0;
-    font-family: inherit;
-    font-size: 16px;
-    color: #0f172a;
-    background: hwb(218 66% 30% / 0.26);
-    border: 2px solid var(--secondary);
-    border-radius: 12px;
-    padding: 14px 16px;
-    outline: none;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
 }
-.todo-app .search-input::placeholder {
-    color: #64748b;
-}
-.todo-app .search-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(255, 107, 91, 0.12);
-}
+
 .todo-app .sort-select {
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-dark);
-    background: hwb(218 66% 30% / 0.26);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 12px;
-    outline: none;
+    flex: 0 0 180px;
+    min-width: 0;
     cursor: pointer;
-    width: 100%;
-    max-width: none;
-    flex: 1 1 100%;
-}
-.todo-app .sort-select:focus {
-    border-color: var(--primary);
 }
 
-/* =========================
-   FILTER TABS
-   ========================= */
 .todo-app .filters {
+    position: relative;
+    z-index: 1;
     display: flex;
+    align-items: center;
+    gap: 10px;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 16px 0 4px;
+    margin-top: 18px;
 }
+
 .todo-app .filter-btn {
-    background: #0b1212;
-    border: none;
-    color: var(--text-dark);
-    font-size: 14px;
-    font-weight: 700;
-    padding: 8px 16px;
+    border: 1px solid transparent;
     border-radius: 999px;
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--text);
+    padding: 8px 16px;
+    font-weight: 800;
     cursor: pointer;
-    flex: 1 0 auto;
-    text-align: center;
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
+
 .todo-app .filter-btn:hover {
-    color: var(--text-dark);
+    transform: translateY(-1px);
 }
+
 .todo-app .filter-btn.active {
-    background: linear-gradient(135deg, var(--primary), var(--pink));
-    color: #0c0303;
+    background: linear-gradient(135deg, var(--text), #374151);
+    color: white;
 }
 
-/* =========================
-   LIST META
-   ========================= */
 .todo-app .list-meta {
+    position: relative;
+    z-index: 1;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 8px;
-    margin: 24px 0 14px;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
     padding: 0 2px;
-}
-.todo-app .list-meta span {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-light);
-}
-.todo-app #count-label {
-    color: var(--purple);
-}
-.todo-app #done-label {
-    color: var(--teal);
+    font-size: 0.9rem;
+    font-weight: 800;
 }
 
-/* =========================
-   SCROLLABLE TASK LIST
-   ========================= */
+.todo-app #count-label {
+    color: var(--primary-strong);
+}
+
+.todo-app #done-label {
+    color: var(--success);
+}
+
 .task-list-container {
-    max-height: 480px;
+    position: relative;
+    z-index: 1;
+    max-height: 540px;
     overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 4px;
-    margin-top: 4px;
+    padding-right: 6px;
+    margin-top: 12px;
 }
+
 .task-list-container::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
-.task-list-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
+
 .task-list-container::-webkit-scrollbar-thumb {
-    background: #bbb;
-    border-radius: 10px;
-}
-.task-list-container::-webkit-scrollbar-thumb:hover {
-    background: #999;
+    background: rgba(148, 163, 184, 0.45);
+    border-radius: 999px;
 }
 
 .todo-app #task-list {
@@ -558,502 +424,633 @@ body.night-mode #mode-btn {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
-/* =========================
-   TASK ITEM
-   ========================= */
 .todo-app #task-list li {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 8px 10px;
-    background: hwb(60.92deg 83.71% 10.09% / 12%);
-    border: 1.5px solid transparent;
-    border-left: 4px solid var(--accent, var(--primary));
-    border-radius: 16px;
-    padding: 12px 12px 12px 8px;
+    gap: 12px;
     width: 100%;
-    animation: todo-rise 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        border-color 0.15s ease,
-        opacity 0.15s ease;
+    padding: 12px 14px 12px 10px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-left: 4px solid var(--accent, var(--primary));
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    animation: todo-rise 0.25s ease;
 }
-.todo-app #task-list li.dragging {
-    opacity: 0.4;
-    box-shadow: 0 10px 24px rgba(35, 41, 70, 0.15);
-    cursor: grabbing;
-}
+
 .todo-app #task-list li:hover {
     transform: translateY(-2px);
-    border-color: var(--accent, var(--primary));
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 }
+
+.todo-app #task-list li.dragging {
+    opacity: 0.5;
+}
+
 @keyframes todo-rise {
     from {
         opacity: 0;
-        transform: translateY(10px) scale(0.96);
+        transform: translateY(8px);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
 
 .todo-app .drag-handle {
     flex: none;
-    width: 20px;
-    height: 28px;
-    background: none;
+    width: 18px;
+    height: 24px;
     border: none;
-    color: var(--text-light);
-    opacity: 0.35;
-    cursor: grab;
+    background: transparent;
+    color: rgba(83, 98, 119, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: grab;
     padding: 0;
-    font-size: 18px;
-    transition:
-        opacity 0.15s ease,
-        color 0.15s ease;
 }
+
 .todo-app .drag-handle:hover {
-    opacity: 0.8;
-    color: var(--accent, var(--primary));
-}
-.todo-app .drag-handle:active {
-    cursor: grabbing;
+    color: var(--primary-strong);
 }
 
 .todo-app .check {
     width: 28px;
     height: 28px;
-    flex: none;
     border-radius: 50%;
-    border: 2px solid var(--accent, var(--secondary));
-    background: var(--card-bg);
-    cursor: pointer;
+    border: 2px solid var(--accent, var(--primary));
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    flex: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
-.todo-app .check:hover {
-    transform: scale(1.15) rotate(-6deg);
-}
+
 .todo-app .check svg {
     width: 15px;
     height: 15px;
     opacity: 0;
-    transform: scale(0.4) rotate(-20deg);
-    transition:
-        opacity 0.2s ease,
-        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0.7);
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
 .todo-app li.done .check {
     background: var(--accent, var(--primary));
     border-color: var(--accent, var(--primary));
-    transform: scale(1.05);
 }
+
 .todo-app li.done .check svg {
     opacity: 1;
-    transform: scale(1) rotate(0deg);
+    transform: scale(1);
 }
 
-/* task main: text + badges */
 .todo-app .task-main {
-    flex: 1 1 100%;
+    flex: 1 1 auto;
     min-width: 0;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px 10px;
 }
+
 .todo-app .task-text {
-    flex: 1 1 100%;
-    font-size: 18px;
-    cursor: pointer;
-    line-height: 1.3;
-    word-break: break-word;
-    color: #0f172a;
-    font-weight: 500;
-    margin: 4px 0 2px;
-    transition: color 0.2s ease;
-}
-body.night-mode .todo-app .task-text {
-    color: #f1f5f9;
-}
-.todo-app li.done .task-text {
-    text-decoration: line-through;
-    color: #16a34a;
-    font-weight: 400;
-}
-body.night-mode .todo-app li.done .task-text {
-    color: #86efac;
-}
-
-/* priority badge */
-.todo-app .priority-badge {
-    display: inline-block;
-    height: 28px;
-    border: none;
-    font-family: inherit;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 999px;
-    flex: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
     line-height: 1.4;
-    transition: transform 0.15s ease;
-}
-.todo-app .priority-badge:hover {
-    transform: translateY(-1px);
-}
-.todo-app .priority-badge.low {
-    background: rgba(23, 184, 166, 0.15);
-    color: #72c710;
-}
-.todo-app .priority-badge.medium {
-    background: rgba(255, 183, 3, 0.18);
-    color: #03010e;
-}
-.todo-app .priority-badge.high {
-    background: rgba(232, 80, 63, 0.14);
-    color: #e8503f;
+    word-break: break-word;
+    cursor: pointer;
 }
 
-/* due badge */
+.todo-app li.done .task-text {
+    color: rgba(30, 166, 114, 0.9);
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.todo-app .priority-badge,
 .todo-app .due-badge {
-    display: none;
-    height: 28px;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: black;
-    color: var(--text-light);
-    border: none;
-    font-family: inherit;
-    cursor: pointer;
-    flex: none;
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-}
-.todo-app .due-badge.show {
-    display: inline-block;
-}
-.todo-app .due-badge.today {
-    background: rgba(255, 183, 3, 0.18);
-    color: #b07a00;
-}
-.todo-app .due-badge.overdue {
-    background: rgba(232, 80, 63, 0.12);
-    color: #e8503f;
-}
-.todo-app .due-badge:hover {
-    transform: translateY(-1px);
-}
-.todo-app .due-badge.empty {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: 1.5px dashed var(--text-light);
+    border: none;
     border-radius: 999px;
-    padding: 2px 10px;
-    color: rgb(8, 238, 58);
-    opacity: 0.55;
+    font-size: 0.73rem;
+    font-weight: 800;
+    line-height: 1;
+    padding: 7px 10px;
     white-space: nowrap;
-    font-size: 12px;
-}
-.todo-app .due-badge.empty:hover {
-    opacity: 1;
-    border-color: var(--primary);
-    color: var(--primary);
-}
-.todo-app .due-editor {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
-/* status badge */
-.todo-app .status-badge {
-    flex: none;
-    align-self: center;
-    border: none;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 999px;
-    cursor: pointer;
-    white-space: nowrap;
-    line-height: 1.3;
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-}
-.todo-app .status-badge:hover {
+.todo-app .priority-badge:hover,
+.todo-app .due-badge:hover {
     transform: translateY(-1px);
 }
-.todo-app .status-badge.pending {
-    background: var(--secondary);
-    color: var(--text-light);
-}
-.todo-app .status-badge.in-progress {
-    background: rgba(23, 184, 166, 0.18);
-    color: #0e8577;
-}
-.todo-app .status-badge.on-hold {
-    background: rgba(255, 183, 3, 0.18);
-    color: #b07a00;
-}
-.todo-app .status-badge.done {
-    background: var(--accent, var(--primary));
-    color: #ffffff;
+
+.todo-app .priority-badge.low {
+    background: rgba(101, 215, 199, 0.16);
+    color: #167f6b;
 }
 
-/* delete button */
+.todo-app .priority-badge.medium {
+    background: rgba(246, 199, 109, 0.21);
+    color: #9c6a00;
+}
+
+.todo-app .priority-badge.high {
+    background: rgba(219, 93, 80, 0.12);
+    color: #c94a3b;
+}
+
+.todo-app .due-badge {
+    background: rgba(124, 108, 247, 0.08);
+    color: var(--primary-strong);
+}
+
+.todo-app .due-badge.today {
+    background: rgba(246, 199, 109, 0.22);
+    color: var(--warning);
+}
+
+.todo-app .due-badge.overdue {
+    background: rgba(219, 93, 80, 0.12);
+    color: var(--danger);
+}
+
+.todo-app .due-badge.empty {
+    background: rgba(148, 163, 184, 0.08);
+    color: var(--muted);
+    border: 1px dashed rgba(148, 163, 184, 0.44);
+}
+
 .todo-app .delete-btn {
     flex: none;
-    align-self: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-light);
-    opacity: 0.7;
-    padding: 6px;
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
     display: flex;
-    font-size: 18px;
-    transition:
-        opacity 0.15s ease,
-        color 0.15s ease,
-        background 0.15s ease,
-        transform 0.15s ease;
-}
-.todo-app #task-list li:hover .delete-btn {
-    opacity: 1;
-}
-.todo-app .delete-btn:hover {
-    opacity: 1;
-    color: #ffffff;
-    background: #e8503f;
-    transform: rotate(90deg);
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(83, 98, 119, 0.8);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-/* empty state */
+.todo-app .delete-btn:hover {
+    background: rgba(219, 93, 80, 0.12);
+    color: var(--danger);
+    transform: rotate(10deg);
+}
+
 .todo-app .empty-state {
     display: none;
-    text-align: center;
-    padding: 40px 12px;
-    color: var(--text-light);
-    font-size: 15px;
-    font-weight: 500;
-    border: 2px dashed var(--secondary);
-    border-radius: 16px;
     margin-top: 12px;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 107, 91, 0.03),
-        rgba(139, 92, 246, 0.03)
-    );
+    padding: 34px 18px;
+    border: 1.5px dashed rgba(148, 163, 184, 0.4);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.28);
+    text-align: center;
+    font-size: 0.96rem;
+    color: var(--muted);
+    font-weight: 600;
 }
 
-/* inline edit */
 .todo-app .edit-input {
     width: 100%;
-    box-sizing: border-box;
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--text-dark);
-    background: #ffffff;
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    padding: 8px 10px;
+    border: 2px solid rgba(124, 108, 247, 0.7);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-weight: 600;
     outline: none;
-    box-shadow: 0 0 0 4px rgba(255, 107, 91, 0.15);
+    box-shadow: 0 0 0 4px rgba(124, 108, 247, 0.08);
 }
 
-/* toast */
 .toast {
     position: fixed;
     left: 50%;
     bottom: 20px;
-    transform: translate(-50%, 20px);
+    transform: translate(-50%, 30px);
     display: flex;
     align-items: center;
-    gap: 14px;
-    background: var(--text-dark);
-    color: #ffffff;
-    padding: 12px 14px 12px 20px;
+    gap: 12px;
+    width: min(420px, calc(100% - 28px));
+    padding: 12px 14px 12px 18px;
     border-radius: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    box-shadow: 0 12px 32px rgba(35, 41, 70, 0.3);
+    background: rgba(15, 23, 42, 0.92);
+    color: white;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.24);
     opacity: 0;
     pointer-events: none;
-    z-index: 10;
-    width: calc(100% - 40px);
-    max-width: 400px;
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 20;
 }
+
 .toast.show {
     opacity: 1;
     transform: translate(-50%, 0);
     pointer-events: auto;
 }
+
 .toast button {
-    background: linear-gradient(135deg, var(--primary), var(--pink));
-    color: #ffffff;
     border: none;
     border-radius: 999px;
-    padding: 7px 16px;
-    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-weight: 800;
+    padding: 8px 12px;
     cursor: pointer;
-    white-space: nowrap;
 }
 
-/* =========================================================
-   BREAKPOINTS — mobile first, enhance upward
-   ========================================================= */
-@media (min-width: 480px) {
-    body {
-        padding: 24px 20px 40px;
-    }
+@media (min-width: 620px) {
     .todo-app {
-        padding: 32px 28px;
+        padding: 32px 28px 20px;
     }
-    .todo-app h1 {
-        font-size: 36px;
-    }
-    .todo-app #task-input {
-        font-size: 18px;
-        padding: 18px 20px;
-    }
-    .todo-app #add-btn {
-        font-size: 22px;
-        padding: 20px;
-    }
-    .todo-app #task-list li {
-        flex-wrap: nowrap;
-        padding: 14px 14px 14px 10px;
-    }
-    .todo-app .task-main {
-        flex: 1 1 auto;
-        flex-wrap: nowrap;
-    }
-    .todo-app .task-text {
-        flex: 1 1 auto;
-        font-size: 20px;
-        margin: 0;
-    }
-}
 
-@media (min-width: 640px) {
     .todo-app .composer {
-        flex-direction: row;
-        align-items: center;
+        gap: 14px;
     }
+
     .todo-app #add-btn {
-        width: auto;
-        white-space: nowrap;
-        padding: 16px 28px;
+        min-width: 132px;
     }
+
+    .todo-app .due-row {
+        gap: 16px;
+    }
+
     .todo-app .due-row label {
-        flex: 0 1 auto;
+        flex: 0 1 230px;
     }
-    .todo-app #due-input,
-    .todo-app #priority-input {
-        width: auto;
-        max-width: 200px;
-    }
+
     .todo-app .toolbar {
         flex-wrap: nowrap;
     }
+
     .todo-app .search-input {
         flex: 1 1 auto;
     }
+
     .todo-app .sort-select {
-        flex: 0 0 auto;
-        width: auto;
-        max-width: 160px;
-    }
-    .todo-app .filter-btn {
-        flex: 0 0 auto;
-    }
-    .todo-app h1 {
-        font-size: 42px;
+        flex: 0 0 190px;
     }
 }
 
 @media (min-width: 900px) {
+    body {
+        padding-top: 36px;
+    }
+
     .todo-app {
-        padding: 42px 38px;
+        padding: 38px 34px 24px;
     }
-    .todo-app h1 {
-        font-size: 46px;
+
+    .todo-app .quote-box {
+        padding: 20px 22px 18px;
     }
-    .todo-app .quote-text {
-        font-size: 20px;
-    }
+
     .todo-app .task-text {
-        font-size: 22px;
-    }
-    .task-list-container {
-        max-height: 700px;
-    }
-    .todo-app #task-list li:hover {
-        transform: translateY(-3px) scale(1.01);
+        font-size: 1.08rem;
     }
 }
 
-/* tiny phones */
-@media (max-width: 380px) {
-    .todo-app {
-        padding: 18px 12px;
-    }
-    .todo-app h1 {
-        font-size: 24px;
-    }
-    .todo-app .filter-btn {
-        font-size: 12px;
-        padding: 6px 10px;
-    }
-    .todo-app .priority-badge,
-    .todo-app .due-badge,
-    .todo-app .status-badge {
-        font-size: 11px;
-        padding: 2px 8px;
-        height: 24px;
-    }
+body.night-mode {
+    background-image: url("starry-sun.webp");
+    color: #e5eefb;
 }
 
-/* touch-friendly tap targets */
-@media (hover: none) {
-    .todo-app .delete-btn {
-        opacity: 0.9;
+body.night-mode .todo-app {
+    background: rgba(15, 23, 42, 0.98);
+    border-color: var(--dark-border);
+    box-shadow: 0 28px 60px rgba(2, 6, 23, 0.5);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.night-mode #mode-btn {
+    background: linear-gradient(135deg, #293754, #493968);
+    border-color: rgba(196, 181, 253, 0.3);
+    color: #ffe28a;
+}
+
+body.night-mode .eyebrow,
+body.night-mode .quote-author {
+    color: #d4c9ff;
+}
+
+body.night-mode .quote-box {
+    background: linear-gradient(135deg, rgba(124, 108, 247, 0.14), rgba(101, 215, 199, 0.08));
+    border-color: rgba(124, 108, 247, 0.25);
+}
+
+body.night-mode .quote-text,
+body.night-mode .task-text,
+body.night-mode #task-input,
+body.night-mode .search-input,
+body.night-mode #due-input,
+body.night-mode #priority-input,
+body.night-mode .sort-select,
+body.night-mode .due-row label,
+body.night-mode .filter-btn {
+    color: #edf5ff;
+}
+
+body.night-mode #task-input,
+body.night-mode .search-input,
+body.night-mode #due-input,
+body.night-mode #priority-input,
+body.night-mode .sort-select {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.24);
+}
+
+body.night-mode .filter-btn {
+    background: rgba(148, 163, 184, 0.08);
+}
+
+body.night-mode .filter-btn.active {
+    background: linear-gradient(135deg, #f5d0ff, #7c6cf7);
+    color: #111827;
+}
+
+body.night-mode .task-list-container::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.45);
+}
+
+body.night-mode .todo-app #task-list li {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: none;
+}
+
+body.night-mode .check {
+    background: rgba(15, 23, 42, 0.7);
+}
+
+body.night-mode .delete-btn,
+body.night-mode .drag-handle {
+    color: rgba(203, 213, 225, 0.8);
+}
+
+body.night-mode .empty-state {
+    background: rgba(15, 23, 42, 0.5);
+    border-color: rgba(148, 163, 184, 0.24);
+    color: #cbd5e1;
+}
+
+body.night-mode .due-badge.empty {
+    background: rgba(148, 163, 184, 0.06);
+    color: #cbd5e1;
+}
+
+body.night-mode .priority-badge.medium {
+    color: #f6d47b;
+}
+
+body.night-mode .task-text {
+    color: #eff6ff;
+}
+
+body.night-mode li.done .task-text {
+    color: #8de3bb;
+}
+
+body.night-mode .quote-btn {
+    box-shadow: 0 10px 18px rgba(124, 108, 247, 0.32);
+}
+
+.profile-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 4px;
+    position: relative;
+    z-index: 1;
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.profile-bar select,
+.profile-bar button,
+.profile-form input,
+.profile-form button {
+    min-height: 38px;
+    border: 1px solid rgba(124, 108, 247, 0.22);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--text);
+    padding: 0 12px;
+    font-weight: 700;
+}
+
+.profile-bar select {
+    min-width: 140px;
+    cursor: pointer;
+}
+
+.profile-bar button {
+    color: var(--primary-strong);
+    cursor: pointer;
+}
+
+.profile-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-form[hidden] {
+    display: none;
+}
+
+.profile-form input {
+    width: 150px;
+    padding: 0 10px;
+    font: inherit;
+}
+
+.profile-form button[type="submit"] {
+    background: var(--primary);
+    color: white;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.profile-bar button:hover {
+    background: rgba(124, 108, 247, 0.1);
+}
+
+.todo-app .note-toggle {
+    flex: none;
+    border: 1px solid rgba(124, 108, 247, 0.2);
+    border-radius: 999px;
+    background: rgba(124, 108, 247, 0.07);
+    color: var(--primary-strong);
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.todo-app .note-toggle:hover {
+    background: rgba(124, 108, 247, 0.14);
+}
+
+.todo-app .task-notes {
+    display: none;
+    flex: 1 0 100%;
+    width: 100%;
+    min-height: 86px;
+    resize: vertical;
+    border: 1px solid rgba(124, 108, 247, 0.2);
+    border-radius: 12px;
+    background: rgba(124, 108, 247, 0.04);
+    color: var(--text);
+    padding: 10px 12px;
+    font: inherit;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    outline: none;
+}
+
+.todo-app .task-notes.open {
+    display: block;
+}
+
+.todo-app .task-notes:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124, 108, 247, 0.1);
+}
+
+.todo-app .pin-btn {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.todo-app .pin-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linejoin: round;
+}
+
+.todo-app .pin-btn:hover {
+    background: rgba(246, 199, 109, 0.15);
+    color: #a66b00;
+}
+
+.todo-app .pin-btn[aria-pressed="true"] {
+    background: rgba(246, 199, 109, 0.2);
+    color: #a66b00;
+}
+
+.todo-app .pin-btn[aria-pressed="true"] svg {
+    fill: currentColor;
+}
+
+body.night-mode .profile-bar {
+    color: #d4deef;
+}
+
+body.night-mode .profile-bar select,
+body.night-mode .profile-bar button,
+body.night-mode .profile-form input,
+body.night-mode .profile-form button {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #edf5ff;
+}
+
+body.night-mode .profile-bar button,
+body.night-mode .note-toggle {
+    color: #d4c9ff;
+}
+
+body.night-mode .profile-form button[type="submit"] {
+    background: var(--primary);
+    color: white;
+}
+
+body.night-mode .note-toggle {
+    background: rgba(124, 108, 247, 0.14);
+    border-color: rgba(196, 181, 253, 0.2);
+}
+
+body.night-mode .task-notes {
+    background: rgba(8, 13, 30, 0.7);
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #edf5ff;
+}
+
+body.night-mode .pin-btn {
+    color: #cbd5e1;
+}
+
+body.night-mode .pin-btn[aria-pressed="true"] {
+    background: rgba(246, 199, 109, 0.18);
+    color: #f6d47b;
+}
+
+@media (max-width: 480px) {
+    .profile-bar {
+        gap: 8px;
     }
-    .todo-app .drag-handle {
-        opacity: 0.6;
+
+    .profile-bar label {
+        flex-basis: 100%;
     }
-    .todo-app #task-list li:hover {
-        transform: none;
+
+    .profile-bar select {
+        flex: 1;
+    }
+
+    .todo-app #task-list li {
+        flex-wrap: wrap;
+    }
+
+    .todo-app .task-main {
+        flex-basis: calc(100% - 100px);
     }
 }

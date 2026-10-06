@@ -5,6 +5,11 @@ const priorityInput = document.getElementById("priority-input");
 const searchInput = document.getElementById("search-input");
 const sortSelect = document.getElementById("sort-select");
 const addBtn = document.getElementById("add-btn");
+const profileSelect = document.getElementById("profile-select");
+const addProfileBtn = document.getElementById("add-profile-btn");
+const profileForm = document.getElementById("profile-form");
+const profileNameInput = document.getElementById("profile-name-input");
+const cancelProfileBtn = document.getElementById("cancel-profile-btn");
 const list = document.getElementById("task-list");
 const errorMsg = document.getElementById("error-msg");
 let countLabel = document.getElementById("count-label");
@@ -22,6 +27,11 @@ const toastUndo = document.getElementById("toast-undo");
 
 const MORNING_STORAGE_KEY = "morning-tasks";
 const NIGHT_STORAGE_KEY = "night-tasks";
+const PROFILES_STORAGE_KEY = "todo-profiles";
+const ACTIVE_PROFILE_STORAGE_KEY = "todo-active-profile";
+const DEFAULT_PROFILE = { id: "default", name: "My profile" };
+let profiles = [DEFAULT_PROFILE];
+let activeProfileId = DEFAULT_PROFILE.id;
 let currentFilter = "all";
 let currentSearch = "";
 let currentSort = "manual";
@@ -54,20 +64,24 @@ function handleAddTask() {
 }
 
 function getCurrentStorageKey() {
-    return document.body.classList.contains("night-mode")
+    const themeKey = document.body.classList.contains("night-mode")
         ? NIGHT_STORAGE_KEY
         : MORNING_STORAGE_KEY;
+    return activeProfileId === DEFAULT_PROFILE.id
+        ? themeKey
+        : `${activeProfileId}-${themeKey}`;
 }
 
 // =========================================================
 // CORE REQUIREMENT 2: Dynamic List Creation
 // =========================================================
-function createTask(text, isDone, due, priority) {
+function createTask(text, isDone, due, priority, note = "", pinned = false) {
     const li = document.createElement("li");
     li.draggable = true;
     if (isDone) li.classList.add("done");
     if (due) li.dataset.due = due;
     li.dataset.priority = priority || "medium";
+    li.dataset.pinned = pinned ? "true" : "false";
 
     // Drag handle
     const handle = document.createElement("button");
@@ -154,6 +168,59 @@ function createTask(text, isDone, due, priority) {
 
     main.appendChild(priorityBadge);
 
+    const noteButton = document.createElement("button");
+    noteButton.className = "note-toggle";
+    noteButton.type = "button";
+    noteButton.textContent = note ? "Edit note" : "+ Add note";
+    noteButton.setAttribute("aria-expanded", "false");
+
+    const noteEditor = document.createElement("textarea");
+    noteEditor.className = "task-notes";
+    noteEditor.placeholder = "Add details or notes for this task...";
+    noteEditor.setAttribute("aria-label", `Notes for ${text}`);
+    noteEditor.value = note;
+
+    noteButton.addEventListener("click", () => {
+        const isOpen = noteEditor.classList.toggle("open");
+        noteButton.setAttribute("aria-expanded", String(isOpen));
+        noteButton.textContent = isOpen
+            ? "Hide note"
+            : noteEditor.value.trim()
+              ? "Edit note"
+              : "+ Add note";
+        if (isOpen) noteEditor.focus();
+    });
+
+    noteEditor.addEventListener("input", () => {
+        noteButton.textContent = noteEditor.value.trim() ? "Edit note" : "+ Add note";
+        saveTasks();
+        applyFilter();
+    });
+
+    main.appendChild(noteButton);
+    main.appendChild(noteEditor);
+
+    const pin = document.createElement("button");
+    pin.className = "pin-btn";
+    pin.type = "button";
+    pin.setAttribute("aria-label", pinned ? "Unpin task" : "Pin task");
+    pin.setAttribute("aria-pressed", String(pinned));
+    pin.title = pinned ? "Unpin task" : "Pin task";
+    pin.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 3H8l1.5 6L6 12v2h5v7l1 1 1-1v-7h5v-2l-3.5-3L16 3Z"></path>
+        </svg>`;
+
+    pin.addEventListener("click", () => {
+        const isPinned = li.dataset.pinned !== "true";
+        li.dataset.pinned = String(isPinned);
+        pin.setAttribute("aria-pressed", String(isPinned));
+        pin.setAttribute("aria-label", isPinned ? "Unpin task" : "Pin task");
+        pin.title = isPinned ? "Unpin task" : "Pin task";
+        applySort();
+        saveTasks();
+    });
+
     // Delete button
     const del = document.createElement("button");
     del.className = "delete-btn";
@@ -185,12 +252,14 @@ function createTask(text, isDone, due, priority) {
             currentSort = "manual";
             sortSelect.value = "manual";
         }
+        applySort();
         saveTasks();
     });
 
     li.appendChild(handle);
     li.appendChild(check);
     li.appendChild(main);
+    li.appendChild(pin);
     li.appendChild(del);
 
     list.appendChild(li);
@@ -357,23 +426,23 @@ list.addEventListener("dragover", (e) => {
 const PRIORITY_RANK = { high: 3, medium: 2, low: 1 };
 
 function applySort() {
-    if (currentSort === "manual") return;
-
     const items = [...list.querySelectorAll("li")];
-
-    if (currentSort === "due") {
-        items.sort((a, b) => {
+    items.sort((a, b) => {
+        const pinOrder = Number(b.dataset.pinned === "true") -
+            Number(a.dataset.pinned === "true");
+        if (pinOrder) return pinOrder;
+        if (currentSort === "due") {
             const aDue = a.dataset.due || "9999-99-99";
             const bDue = b.dataset.due || "9999-99-99";
             return aDue.localeCompare(bDue);
-        });
-    } else if (currentSort === "priority") {
-        items.sort((a, b) => {
+        }
+        if (currentSort === "priority") {
             const aRank = PRIORITY_RANK[a.dataset.priority || "medium"];
             const bRank = PRIORITY_RANK[b.dataset.priority || "medium"];
             return bRank - aRank;
-        });
-    }
+        }
+        return 0;
+    });
 
     items.forEach((li) => list.appendChild(li));
 }
@@ -393,10 +462,9 @@ function applyFilter() {
         if (currentFilter === "done") show = isDone;
 
         if (show && currentSearch) {
-            const text = li
-                .querySelector(".task-text")
-                .textContent.toLowerCase();
-            show = text.includes(currentSearch);
+            const text = li.querySelector(".task-text").textContent.toLowerCase();
+            const note = li.querySelector(".task-notes").value.toLowerCase();
+            show = text.includes(currentSearch) || note.includes(currentSearch);
         }
 
         li.style.display = show ? "flex" : "none";
@@ -446,6 +514,8 @@ function saveTasks() {
             done: li.classList.contains("done"),
             due: li.dataset.due || "",
             priority: li.dataset.priority || "medium",
+            note: li.querySelector(".task-notes").value,
+            pinned: li.dataset.pinned === "true",
         }));
 
         localStorage.setItem(getCurrentStorageKey(), JSON.stringify(items));
@@ -462,9 +532,20 @@ function myFunction() {
     body.classList.toggle("night-mode");
 
     if (body.classList.contains("night-mode")) {
-        button.textContent = "Morning Mode";
+        button.innerHTML = `
+            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
+            </svg>`;
+        button.setAttribute("aria-label", "Switch to light mode");
+        button.title = "Switch to light mode";
     } else {
-        button.textContent = "Night Mode";
+        button.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.4 15.5A8.5 8.5 0 0 1 8.5 3.6 8.5 8.5 0 1 0 20.4 15.5Z"></path>
+            </svg>`;
+        button.setAttribute("aria-label", "Switch to dark mode");
+        button.title = "Switch to dark mode";
     }
 
     list.innerHTML = "";
@@ -494,14 +575,120 @@ function loadTasks() {
 
         const items = JSON.parse(raw);
         items.forEach((item) =>
-            createTask(item.text, item.done, item.due, item.priority),
+            createTask(
+                item.text,
+                item.done,
+                item.due,
+                item.priority,
+                item.note || "",
+                item.pinned === true,
+            ),
         );
 
+        applySort();
         applyFilter();
     } catch (err) {
         console.log(err);
     }
+
 }
+
+function initializeProfiles() {
+    try {
+        const storedProfiles = JSON.parse(
+            localStorage.getItem(PROFILES_STORAGE_KEY) || "null",
+        );
+        if (Array.isArray(storedProfiles)) {
+            profiles = storedProfiles.filter(
+                (profile) =>
+                    profile &&
+                    typeof profile.id === "string" &&
+                    typeof profile.name === "string",
+            );
+        }
+        if (!profiles.some((profile) => profile.id === DEFAULT_PROFILE.id)) {
+            profiles.unshift(DEFAULT_PROFILE);
+        }
+
+        const requestedProfile = localStorage.getItem(ACTIVE_PROFILE_STORAGE_KEY);
+        activeProfileId = profiles.some((profile) => profile.id === requestedProfile)
+            ? requestedProfile
+            : DEFAULT_PROFILE.id;
+        renderProfiles();
+    } catch (err) {
+        errorMsg.textContent = "Could not load local profiles from this browser.";
+        console.error("Could not load local profiles.", err);
+    }
+}
+
+function renderProfiles() {
+    profileSelect.replaceChildren();
+    profiles.forEach((profile) => {
+        const option = document.createElement("option");
+        option.value = profile.id;
+        option.textContent = profile.name;
+        profileSelect.appendChild(option);
+    });
+    profileSelect.value = activeProfileId;
+}
+
+profileSelect.addEventListener("change", () => {
+    saveTasks();
+    activeProfileId = profileSelect.value;
+    localStorage.setItem(ACTIVE_PROFILE_STORAGE_KEY, activeProfileId);
+    list.replaceChildren();
+    loadTasks();
+    updateCounts();
+    applySort();
+    applyFilter();
+});
+
+addProfileBtn.addEventListener("click", () => {
+    profileForm.hidden = !profileForm.hidden;
+    if (!profileForm.hidden) profileNameInput.focus();
+});
+
+cancelProfileBtn.addEventListener("click", () => {
+    profileForm.hidden = true;
+    profileNameInput.value = "";
+    errorMsg.textContent = "";
+});
+
+profileForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const cleanName = profileNameInput.value.trim();
+    if (!cleanName) {
+        errorMsg.textContent = "Please enter a name for the profile.";
+        return;
+    }
+    if (profiles.some((profile) => profile.name.toLowerCase() === cleanName.toLowerCase())) {
+        errorMsg.textContent = "A profile with that name already exists.";
+        return;
+    }
+
+    const profile = {
+        id: `profile-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        name: cleanName,
+    };
+    const updatedProfiles = [...profiles, profile];
+    try {
+        localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(updatedProfiles));
+        localStorage.setItem(ACTIVE_PROFILE_STORAGE_KEY, profile.id);
+        profiles = updatedProfiles;
+        activeProfileId = profile.id;
+        renderProfiles();
+        list.replaceChildren();
+        updateCounts();
+        applySort();
+        applyFilter();
+        profileForm.reset();
+        profileForm.hidden = true;
+        errorMsg.textContent = "";
+    } catch (err) {
+        errorMsg.textContent = "Could not save this profile in local storage.";
+        console.error("Could not save local profile.", err);
+    }
+});
 
 // =========================================================
 // Motivational Quotes
@@ -560,6 +747,7 @@ input.addEventListener("input", () => {
 });
 
 // ---- Init ----
+initializeProfiles();
 loadTasks();
 updateCounts();
 applySort();
