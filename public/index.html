@@ -40,15 +40,15 @@
                 </button>
             </div>
 
-            <div class="composer">
+            <form id="task-form" class="composer">
                 <input
                     type="text"
                     id="task-input"
                     placeholder="Add a task..."
                     autocomplete="off"
                 />
-                <button id="add-btn">Add</button>
-            </div>
+                <button id="add-btn" type="submit">Add</button>
+            </form>
 
             <!-- DUE DATE + PRIORITY -->
             <div class="due-row">
@@ -119,6 +119,6 @@
             <button id="toast-undo" type="button">Undo</button>
         </div>
 
-        <script src="to-do-list.js"></script>
+        <script src="to-do-list.js" defer></script>
     </body>
 </html>

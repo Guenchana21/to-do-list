@@ -44,9 +44,7 @@ body {
     justify-content: center;
     font-family: Inter, "Segoe UI", sans-serif;
     color: var(--text);
-    background-image:
-        linear-gradient(rgba(239, 245, 255, 0.18), rgba(255, 242, 231, 0.2)),
-        url("night-sky.webp");
+    background-image: url("night-sky.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -63,7 +61,7 @@ select {
 .todo-app {
     width: min(1120px, 100%);
     padding: 26px 18px 18px;
-    position: relative;
+    position: fixed;
     border-radius: 28px;
     background: rgba(255, 255, 255, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.82);
@@ -80,7 +78,11 @@ select {
     width: 260px;
     height: 260px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 141, 125, 0.24), transparent 70%);
+    background: radial-gradient(
+        circle,
+        rgba(255, 141, 125, 0.24),
+        transparent 70%
+    );
     pointer-events: none;
 }
 
@@ -120,7 +122,12 @@ select {
     line-height: 0.96;
     font-weight: 900;
     letter-spacing: -0.06em;
-    background: linear-gradient(120deg, var(--primary-strong), var(--secondary), #8c7cf4);
+    background: linear-gradient(
+        120deg,
+        var(--primary-strong),
+        var(--secondary),
+        #8c7cf4
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -138,7 +145,10 @@ select {
     color: #7c5bda;
     border-radius: 16px;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
 #mode-btn svg {
@@ -166,7 +176,11 @@ select {
     padding: 18px 18px 16px;
     border-radius: 20px;
     border: 1px solid rgba(124, 108, 247, 0.18);
-    background: linear-gradient(135deg, rgba(124, 108, 247, 0.08), rgba(255, 141, 125, 0.06));
+    background: linear-gradient(
+        135deg,
+        rgba(124, 108, 247, 0.08),
+        rgba(255, 141, 125, 0.06)
+    );
 }
 
 .todo-app .quote-text {
@@ -195,7 +209,9 @@ select {
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(124, 108, 247, 0.22);
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
 
 .todo-app .quote-btn:hover {
@@ -225,7 +241,10 @@ select {
     font-size: 1.05rem;
     color: var(--text);
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .todo-app #task-input::placeholder {
@@ -250,10 +269,18 @@ select {
 
 @keyframes todo-shake {
     0%,
-    100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    50% { transform: translateX(6px); }
-    75% { transform: translateX(-4px); }
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-6px);
+    }
+    50% {
+        transform: translateX(6px);
+    }
+    75% {
+        transform: translateX(-4px);
+    }
 }
 
 .todo-app #add-btn {
@@ -268,7 +295,9 @@ select {
     padding: 16px 20px;
     cursor: pointer;
     box-shadow: 0 16px 28px rgba(255, 141, 125, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .todo-app #add-btn:hover {
@@ -367,7 +396,10 @@ select {
     padding: 8px 16px;
     font-weight: 800;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
 .todo-app .filter-btn:hover {
@@ -438,7 +470,10 @@ select {
     border: 1px solid rgba(148, 163, 184, 0.3);
     border-left: 4px solid var(--accent, var(--primary));
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
     animation: todo-rise 0.25s ease;
 }
 
@@ -492,7 +527,9 @@ select {
     padding: 0;
     flex: none;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
 }
 
 .todo-app .check svg {
@@ -500,7 +537,9 @@ select {
     height: 15px;
     opacity: 0;
     transform: scale(0.7);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
 .todo-app li.done .check {
@@ -608,7 +647,10 @@ select {
     background: transparent;
     color: rgba(83, 98, 119, 0.8);
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .todo-app .delete-btn:hover {
@@ -659,7 +701,9 @@ select {
     box-shadow: 0 16px 40px rgba(15, 23, 42, 0.24);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
     z-index: 20;
 }
 
@@ -756,7 +800,11 @@ body.night-mode .quote-author {
 }
 
 body.night-mode .quote-box {
-    background: linear-gradient(135deg, rgba(124, 108, 247, 0.14), rgba(101, 215, 199, 0.08));
+    background: linear-gradient(
+        135deg,
+        rgba(124, 108, 247, 0.14),
+        rgba(101, 215, 199, 0.08)
+    );
     border-color: rgba(124, 108, 247, 0.25);
 }
 
@@ -890,7 +938,10 @@ body.night-mode .quote-btn {
     background: transparent;
     color: var(--muted);
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .todo-app .pin-btn svg {

@@ -4,7 +4,7 @@ const dueInput = document.getElementById("due-input");
 const priorityInput = document.getElementById("priority-input");
 const searchInput = document.getElementById("search-input");
 const sortSelect = document.getElementById("sort-select");
-const addBtn = document.getElementById("add-btn");
+const taskForm = document.getElementById("task-form");
 const list = document.getElementById("task-list");
 const errorMsg = document.getElementById("error-msg");
 let countLabel = document.getElementById("count-label");
@@ -507,8 +507,12 @@ function saveTasks() {
         }));
 
         localStorage.setItem(getCurrentStorageKey(), JSON.stringify(items));
+        return true;
     } catch (err) {
-        console.log(err);
+        errorMsg.textContent =
+            "Could not save tasks in this browser. Check available storage and try again.";
+        console.error("Could not save tasks to local storage.", err);
+        return false;
     }
 }
 
@@ -576,7 +580,9 @@ function loadTasks() {
         applySort();
         applyFilter();
     } catch (err) {
-        console.log(err);
+        errorMsg.textContent =
+            "Could not load saved tasks from this browser. Your saved data was not changed.";
+        console.error("Could not load tasks from local storage.", err);
     }
 
 }
@@ -661,10 +667,9 @@ function restartQuoteTimer() {
 // =========================================================
 // Wiring
 // =========================================================
-addBtn.addEventListener("click", handleAddTask);
-
-input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleAddTask();
+taskForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    handleAddTask();
 });
 
 dueInput.addEventListener("keydown", (e) => {
