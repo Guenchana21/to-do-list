@@ -1231,6 +1231,24 @@ body.night-mode .pin-btn[aria-pressed="true"] {
     }
 }
 
+.todo-app .edit-input {
+    width: 100%;
+    border: 2px solid rgba(124, 108, 247, 0.7);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(124, 108, 247, 0.08);
+}
+
+body.night-mode .edit-input {
+    background: #111827;
+    color: #edf5ff;
+}
+
 .task-detail-dialog {
     width: min(920px, calc(100% - 32px));
     max-width: none;

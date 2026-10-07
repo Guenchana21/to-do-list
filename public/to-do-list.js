@@ -144,7 +144,10 @@ function createTask(
     const span = document.createElement("span");
     span.className = "task-text";
     span.textContent = text;
-    span.title = "Double-click to edit";
+    span.setAttribute("role", "button");
+    span.tabIndex = 0;
+    span.setAttribute("aria-label", `Open details for ${text}`);
+    span.title = "Click to view or edit task details";
 
     const badge = document.createElement("span");
     badge.className = "due-badge";
@@ -193,30 +196,22 @@ function createTask(
     const noteButton = document.createElement("button");
     noteButton.className = "note-toggle";
     noteButton.type = "button";
-    noteButton.textContent = note ? "Edit note" : "+ Add note";
-    noteButton.setAttribute("aria-expanded", "false");
 
     const noteEditor = document.createElement("textarea");
     noteEditor.className = "task-notes";
     noteEditor.placeholder = "Add details or notes for this task...";
     noteEditor.setAttribute("aria-label", `Notes for ${text}`);
     noteEditor.value = note;
+    updateNoteToggle(noteButton, noteEditor);
 
     noteButton.addEventListener("click", () => {
-        const isOpen = noteEditor.classList.toggle("open");
-        noteButton.setAttribute("aria-expanded", String(isOpen));
-        noteButton.textContent = isOpen
-            ? "Hide note"
-            : noteEditor.value.trim()
-              ? "Edit note"
-              : "+ Add note";
-        if (isOpen) noteEditor.focus();
+        noteEditor.classList.toggle("open");
+        updateNoteToggle(noteButton, noteEditor);
+        if (noteEditor.classList.contains("open")) noteEditor.focus();
     });
 
     noteEditor.addEventListener("input", () => {
-        noteButton.textContent = noteEditor.value.trim()
-            ? "Edit note"
-            : "+ Add note";
+        updateNoteToggle(noteButton, noteEditor);
         saveTasks();
         applyFilter();
     });
@@ -267,10 +262,6 @@ function createTask(
 
     del.addEventListener("click", () => deleteTask(li));
 
-    span.setAttribute("role", "button");
-    span.tabIndex = 0;
-    span.setAttribute("aria-label", `Open details for ${text}`);
-    span.title = "Click to view or edit task details";
     span.addEventListener("click", () => openTaskDetails(li));
     span.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -300,6 +291,17 @@ function createTask(
     renderDue(li);
     renderPriority(li);
     updateCounts();
+}
+
+function updateNoteToggle(button, editor) {
+    const isOpen = editor.classList.contains("open");
+    const hasNote = editor.value.trim().length > 0;
+    const label = hasNote ? (isOpen ? "Hide note" : "Show note") : "+ Add note";
+
+    button.textContent = label;
+    button.title = label;
+    button.setAttribute("aria-label", label);
+    button.setAttribute("aria-expanded", String(isOpen));
 }
 
 function openTaskDetails(li) {
@@ -341,11 +343,12 @@ taskDetailForm.addEventListener("submit", (event) => {
     taskText.title = "Click to view or edit task details";
     notes.value = taskDetailNote.value;
     notes.setAttribute("aria-label", `Notes for ${title}`);
-    noteButton.textContent = notes.value.trim() ? "Edit note" : "+ Add note";
+    updateNoteToggle(noteButton, notes);
     li.dataset.due = taskDetailDue.value;
     li.dataset.priority = taskDetailPriority.value;
     li.dataset.status = taskDetailStatus.value;
     statusSelect.value = taskDetailStatus.value;
+    statusSelect.dataset.status = taskDetailStatus.value;
     li.classList.toggle("done", taskDetailDone.checked);
 
     renderDue(li);
@@ -366,6 +369,42 @@ document
 taskDetailDialog.addEventListener("close", () => {
     activeDetailTask = null;
 });
+
+function startEdit(span, li) {
+    const editor = document.createElement("input");
+    editor.type = "text";
+    editor.className = "edit-input";
+    editor.value = span.textContent;
+
+    li.draggable = false;
+    span.replaceWith(editor);
+    editor.focus();
+    editor.select();
+
+    let finished = false;
+
+    function finish(save) {
+        if (finished) return;
+        finished = true;
+
+        const newText = editor.value.trim();
+        if (save && newText !== "") {
+            span.textContent = newText;
+            span.setAttribute("aria-label", `Rename task: ${newText}`);
+        }
+
+        editor.replaceWith(span);
+        li.draggable = true;
+        saveTasks();
+    }
+
+    editor.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") finish(true);
+        if (event.key === "Escape") finish(false);
+    });
+
+    editor.addEventListener("blur", () => finish(true));
+}
 
 function renderPriority(li) {
     const badge = li.querySelector(".priority-badge");
