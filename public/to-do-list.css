@@ -518,8 +518,8 @@ select {
 
 .todo-app .drag-handle {
     flex: none;
-    width: 18px;
-    height: 24px;
+    width: 20px;
+    height: 28px;
     border: none;
     background: transparent;
     color: rgba(83, 98, 119, 0.7);
@@ -534,9 +534,14 @@ select {
     color: var(--primary-strong);
 }
 
+.todo-app .drag-handle svg {
+    width: 12px;
+    height: 18px;
+}
+
 .todo-app .check {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 2px solid var(--accent, var(--primary));
     background: white;
@@ -552,8 +557,8 @@ select {
 }
 
 .todo-app .check svg {
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
     opacity: 0;
     transform: scale(0.7);
     transition:
@@ -583,7 +588,7 @@ select {
 .todo-app .task-text {
     flex: 1 1 auto;
     min-width: 0;
-    font-size: 1.05rem;
+    font-size: 1.12rem;
     font-weight: 600;
     color: var(--text);
     line-height: 1.4;
@@ -604,10 +609,10 @@ select {
     justify-content: center;
     border: none;
     border-radius: 999px;
-    font-size: 0.73rem;
+    font-size: 0.78rem;
     font-weight: 800;
     line-height: 1;
-    padding: 7px 10px;
+    padding: 8px 11px;
     white-space: nowrap;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -633,6 +638,30 @@ select {
     color: #c94a3b;
 }
 
+.todo-app .status-select {
+    max-width: 100%;
+    min-height: 36px;
+    border: 1px solid rgba(124, 108, 247, 0.22);
+    border-radius: 999px;
+    background: rgba(124, 108, 247, 0.08);
+    color: var(--primary-strong);
+    padding: 7px 13px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.todo-app .status-select:focus {
+    outline: none;
+    border-color: rgba(124, 108, 247, 0.8);
+    box-shadow: 0 0 0 3px rgba(124, 108, 247, 0.12);
+}
+
+.todo-app .status-select option {
+    background: white;
+    color: var(--text);
+}
+
 .todo-app .due-badge {
     background: rgba(124, 108, 247, 0.08);
     color: var(--primary-strong);
@@ -656,8 +685,8 @@ select {
 
 .todo-app .delete-btn {
     flex: none;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -670,6 +699,11 @@ select {
         background 0.2s ease,
         color 0.2s ease,
         transform 0.2s ease;
+}
+
+.todo-app .delete-btn svg {
+    width: 18px;
+    height: 18px;
 }
 
 .todo-app .delete-btn:hover {
@@ -698,7 +732,7 @@ select {
     background: rgba(255, 255, 255, 0.95);
     color: var(--text);
     padding: 10px 12px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
     outline: none;
     box-shadow: 0 0 0 4px rgba(124, 108, 247, 0.08);
@@ -790,7 +824,7 @@ select {
     }
 
     .todo-app .task-text {
-        font-size: 1.08rem;
+        font-size: 1.15rem;
     }
 }
 
@@ -902,6 +936,17 @@ body.night-mode .priority-badge.medium {
     color: #f6d47b;
 }
 
+body.night-mode .todo-app .status-select {
+    border-color: rgba(196, 181, 253, 0.28);
+    background: rgba(124, 108, 247, 0.18);
+    color: #d4c9ff;
+}
+
+body.night-mode .todo-app .status-select option {
+    background: #0f172a;
+    color: #edf5ff;
+}
+
 body.night-mode .task-text {
     color: #eff6ff;
 }
@@ -920,8 +965,8 @@ body.night-mode .quote-btn {
     border-radius: 999px;
     background: rgba(124, 108, 247, 0.07);
     color: var(--primary-strong);
-    padding: 6px 10px;
-    font-size: 0.72rem;
+    padding: 7px 11px;
+    font-size: 0.78rem;
     font-weight: 800;
     cursor: pointer;
 }
@@ -942,7 +987,7 @@ body.night-mode .quote-btn {
     color: var(--text);
     padding: 10px 12px;
     font: inherit;
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     line-height: 1.5;
     outline: none;
 }
@@ -958,8 +1003,8 @@ body.night-mode .quote-btn {
 
 .todo-app .pin-btn {
     flex: none;
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -975,8 +1020,8 @@ body.night-mode .quote-btn {
 }
 
 .todo-app .pin-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.7;

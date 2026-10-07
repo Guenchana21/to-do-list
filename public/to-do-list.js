@@ -23,6 +23,14 @@ const toastUndo = document.getElementById("toast-undo");
 const MORNING_STORAGE_KEY = "morning-tasks";
 const NIGHT_STORAGE_KEY = "night-tasks";
 const ACTIVE_PROFILE_STORAGE_KEY = "todo-active-profile";
+const TASK_STATUSES = {
+    waiting: "Waiting for customer",
+    in_progress: "In Progress",
+    escalated: "Escalated",
+    pending: "Pending",
+    canceled: "Canceled",
+    resolved: "Resolved",
+};
 let currentFilter = "all";
 let currentSearch = "";
 let currentSort = "manual";
@@ -63,13 +71,27 @@ function getCurrentStorageKey() {
 // =========================================================
 // CORE REQUIREMENT 2: Dynamic List Creation
 // =========================================================
-function createTask(text, isDone, due, priority, note = "", pinned = false) {
+function createTask(
+    text,
+    isDone,
+    due,
+    priority,
+    note = "",
+    pinned = false,
+    status = "pending",
+) {
     const li = document.createElement("li");
     li.draggable = true;
     if (isDone) li.classList.add("done");
     if (due) li.dataset.due = due;
     li.dataset.priority = priority || "medium";
     li.dataset.pinned = pinned ? "true" : "false";
+    li.dataset.status = Object.prototype.hasOwnProperty.call(
+        TASK_STATUSES,
+        status,
+    )
+        ? status
+        : "pending";
 
     // Drag handle
     const handle = document.createElement("button");
@@ -155,6 +177,24 @@ function createTask(text, isDone, due, priority, note = "", pinned = false) {
     });
 
     main.appendChild(priorityBadge);
+
+    const statusSelect = document.createElement("select");
+    statusSelect.className = "status-select";
+    statusSelect.setAttribute("aria-label", `Status for task: ${text}`);
+    statusSelect.title = "Change task status";
+    Object.entries(TASK_STATUSES).forEach(([value, label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        statusSelect.appendChild(option);
+    });
+    statusSelect.value = li.dataset.status;
+    statusSelect.addEventListener("change", () => {
+        li.dataset.status = statusSelect.value;
+        saveTasks();
+    });
+
+    main.appendChild(statusSelect);
 
     const noteButton = document.createElement("button");
     noteButton.className = "note-toggle";
@@ -507,6 +547,7 @@ function saveTasks() {
             done: li.classList.contains("done"),
             due: li.dataset.due || "",
             priority: li.dataset.priority || "medium",
+            status: li.dataset.status || "pending",
             note: li.querySelector(".task-notes").value,
             pinned: li.dataset.pinned === "true",
         }));
@@ -579,6 +620,7 @@ function loadTasks() {
                 item.priority,
                 item.note || "",
                 item.pinned === true,
+                item.status || "pending",
             ),
         );
 
