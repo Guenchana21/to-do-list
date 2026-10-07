@@ -13,6 +13,7 @@ const emptyState = document.getElementById("empty-state");
 const emptyTitle = document.getElementById("empty-title");
 const emptyMessage = document.getElementById("empty-message");
 const greetingLabel = document.getElementById("greeting-label");
+const currentTime = document.getElementById("current-time");
 const todayDate = document.getElementById("today-date");
 const progressLabel = document.getElementById("progress-label");
 const taskProgress = document.getElementById("task-progress");
@@ -608,6 +609,7 @@ function updateDashboard(total, completed) {
     greetingLabel.textContent = document.body.classList.contains("night-mode")
         ? "Good evening."
         : "Good day.";
+    updateClock(now);
     todayDate.textContent = now.toLocaleDateString(undefined, {
         weekday: "long",
         month: "long",
@@ -618,6 +620,15 @@ function updateDashboard(total, completed) {
     progressLabel.textContent = `${completed} of ${total} task${total === 1 ? "" : "s"} complete`;
     taskProgress.max = Math.max(total, 1);
     taskProgress.value = completed;
+}
+
+function updateClock(now = new Date()) {
+    currentTime.textContent = now.toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+    });
+    currentTime.dateTime = now.toISOString();
 }
 
 function toggleEmptyState() {
@@ -853,3 +864,4 @@ updateCounts();
 applySort();
 fetchQuote();
 restartQuoteTimer();
+setInterval(updateClock, 1000);
