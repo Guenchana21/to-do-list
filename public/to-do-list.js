@@ -180,7 +180,9 @@ function createTask(text, isDone, due, priority, note = "", pinned = false) {
     });
 
     noteEditor.addEventListener("input", () => {
-        noteButton.textContent = noteEditor.value.trim() ? "Edit note" : "+ Add note";
+        noteButton.textContent = noteEditor.value.trim()
+            ? "Edit note"
+            : "+ Add note";
         saveTasks();
         applyFilter();
     });
@@ -416,7 +418,8 @@ const PRIORITY_RANK = { high: 3, medium: 2, low: 1 };
 function applySort() {
     const items = [...list.querySelectorAll("li")];
     items.sort((a, b) => {
-        const pinOrder = Number(b.dataset.pinned === "true") -
+        const pinOrder =
+            Number(b.dataset.pinned === "true") -
             Number(a.dataset.pinned === "true");
         if (pinOrder) return pinOrder;
         if (currentSort === "due") {
@@ -450,7 +453,9 @@ function applyFilter() {
         if (currentFilter === "done") show = isDone;
 
         if (show && currentSearch) {
-            const text = li.querySelector(".task-text").textContent.toLowerCase();
+            const text = li
+                .querySelector(".task-text")
+                .textContent.toLowerCase();
             const note = li.querySelector(".task-notes").value.toLowerCase();
             show = text.includes(currentSearch) || note.includes(currentSearch);
         }
@@ -584,12 +589,13 @@ function loadTasks() {
             "Could not load saved tasks from this browser. Your saved data was not changed.";
         console.error("Could not load tasks from local storage.", err);
     }
-
 }
 
 function migrateActiveProfileTasks() {
     try {
-        const activeProfileId = localStorage.getItem(ACTIVE_PROFILE_STORAGE_KEY);
+        const activeProfileId = localStorage.getItem(
+            ACTIVE_PROFILE_STORAGE_KEY,
+        );
         if (!activeProfileId || !activeProfileId.startsWith("profile-")) return;
 
         for (const themeKey of [MORNING_STORAGE_KEY, NIGHT_STORAGE_KEY]) {
@@ -601,7 +607,9 @@ function migrateActiveProfileTasks() {
             if (sourceValue !== null) {
                 const sourceTasks = JSON.parse(sourceValue);
                 if (!Array.isArray(sourceTasks)) {
-                    throw new Error(`Stored tasks for ${sourceKey} are not a list.`);
+                    throw new Error(
+                        `Stored tasks for ${sourceKey} are not a list.`,
+                    );
                 }
 
                 const destinationValue = localStorage.getItem(themeKey);
@@ -609,7 +617,9 @@ function migrateActiveProfileTasks() {
                     ? JSON.parse(destinationValue)
                     : [];
                 if (!Array.isArray(destinationTasks)) {
-                    throw new Error(`Stored tasks for ${themeKey} are not a list.`);
+                    throw new Error(
+                        `Stored tasks for ${themeKey} are not a list.`,
+                    );
                 }
                 localStorage.setItem(
                     themeKey,
@@ -628,24 +638,45 @@ function migrateActiveProfileTasks() {
 // =========================================================
 // Motivational Quotes
 // =========================================================
+const QUOTE_INTERVAL_MS = 5000;
+const QUOTE_FADE_DURATION_MS = 700;
+let quoteTimer = null;
+let quoteIsChanging = false;
+
 async function fetchQuote() {
+    if (quoteIsChanging) return;
+    quoteIsChanging = true;
     quoteBtn.disabled = true;
     quoteBtn.textContent = "Loading...";
-    quoteText.textContent = "Fetching a quote...";
-    quoteAuthor.textContent = "";
 
+    let nextQuote;
+    let nextAuthor;
     try {
         const response = await fetch("https://dummyjson.com/quotes/random");
         if (!response.ok) throw new Error("Request failed");
         const data = await response.json();
 
-        quoteText.textContent = `"${data.quote}"`;
-        quoteAuthor.textContent = `— ${data.author}`;
+        nextQuote = `"${data.quote}"`;
+        nextAuthor = `— ${data.author}`;
     } catch (err) {
-        quoteText.textContent =
+        nextQuote =
             "Couldn't load a quote — check your connection and try again.";
-        quoteAuthor.textContent = "";
+        nextAuthor = "";
+    }
+
+    quoteText.classList.add("is-fading");
+    quoteAuthor.classList.add("is-fading");
+
+    try {
+        await new Promise((resolve) =>
+            setTimeout(resolve, QUOTE_FADE_DURATION_MS),
+        );
+        quoteText.textContent = nextQuote;
+        quoteAuthor.textContent = nextAuthor;
     } finally {
+        quoteText.classList.remove("is-fading");
+        quoteAuthor.classList.remove("is-fading");
+        quoteIsChanging = false;
         quoteBtn.disabled = false;
         quoteBtn.textContent = "New Quote";
     }
@@ -655,9 +686,6 @@ quoteBtn.addEventListener("click", () => {
     fetchQuote();
     restartQuoteTimer();
 });
-
-const QUOTE_INTERVAL_MS = 5000;
-let quoteTimer = null;
 
 function restartQuoteTimer() {
     clearInterval(quoteTimer);

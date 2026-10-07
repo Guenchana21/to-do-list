@@ -32,7 +32,7 @@
 
 html,
 body {
-    height: 100%;
+    min-height: 100%;
 }
 
 body {
@@ -49,7 +49,6 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    transition: background-image 0.25s ease;
 }
 
 button,
@@ -61,7 +60,7 @@ select {
 .todo-app {
     width: min(1120px, 100%);
     padding: 26px 18px 18px;
-    position: fixed;
+    position: relative;
     border-radius: 28px;
     background: rgba(255, 255, 255, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.82);
@@ -134,8 +133,8 @@ select {
 }
 
 #mode-btn {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -152,8 +151,8 @@ select {
 }
 
 #mode-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 35px;
+    height: 35px;
     fill: currentColor;
 }
 
@@ -173,7 +172,7 @@ select {
     position: relative;
     z-index: 1;
     margin: 18px 0 22px;
-    padding: 18px 18px 16px;
+    padding: 12px 10px 16px;
     border-radius: 20px;
     border: 1px solid rgba(124, 108, 247, 0.18);
     background: linear-gradient(
@@ -184,23 +183,42 @@ select {
 }
 
 .todo-app .quote-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0 0 8px;
-    font-size: 1.08rem;
+    font-size: 1.7rem;
     font-style: italic;
     line-height: 1.6;
     color: var(--text);
+    min-height: 8em;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 700ms ease;
 }
 
 .todo-app .quote-author {
+    display: block;
+    width: 100%;
     margin: 0 0 12px;
     color: var(--primary-strong);
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     letter-spacing: 0.04em;
     min-height: 1em;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 700ms ease;
+}
+
+.todo-app .quote-text.is-fading,
+.todo-app .quote-author.is-fading {
+    opacity: 0;
 }
 
 .todo-app .quote-btn {
+    display: block;
+    margin: 0 auto;
     border: none;
     border-radius: 999px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -236,10 +254,10 @@ select {
     min-width: 0;
     border: 1.5px solid rgba(116, 136, 163, 0.4);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.92);
+    background: #ffffff;
     padding: 17px 18px;
     font-size: 1.05rem;
-    color: var(--text);
+    color: #1d2433;
     outline: none;
     transition:
         border-color 0.2s ease,
@@ -248,7 +266,8 @@ select {
 }
 
 .todo-app #task-input::placeholder {
-    color: rgba(83, 98, 119, 0.7);
+    color: #536277;
+    opacity: 1;
 }
 
 .todo-app #task-input:focus,
@@ -258,7 +277,7 @@ select {
 .todo-app .sort-select:focus {
     border-color: rgba(124, 108, 247, 0.8);
     box-shadow: 0 0 0 5px rgba(124, 108, 247, 0.12);
-    background: rgba(255, 255, 255, 0.8);
+    background: #ffffff;
 }
 
 .todo-app #task-input.shake {
@@ -290,7 +309,7 @@ select {
     border-radius: 16px;
     background: linear-gradient(135deg, var(--secondary), #f39c81);
     color: white;
-    font-size: 1.05rem;
+    font-size: 1.4rem;
     font-weight: 800;
     padding: 16px 20px;
     cursor: pointer;
@@ -820,6 +839,11 @@ body.night-mode .filter-btn {
     color: #edf5ff;
 }
 
+body.night-mode .todo-app #task-input::placeholder {
+    color: #b8c5d9;
+    opacity: 1;
+}
+
 body.night-mode #task-input,
 body.night-mode .search-input,
 body.night-mode #due-input,
@@ -827,6 +851,12 @@ body.night-mode #priority-input,
 body.night-mode .sort-select {
     background: rgba(15, 23, 42, 0.9);
     border-color: rgba(148, 163, 184, 0.24);
+}
+
+body.night-mode .todo-app #task-input:focus {
+    background: #111827;
+    color: #f8fafc;
+    border-color: #a99bff;
 }
 
 body.night-mode .filter-btn {
