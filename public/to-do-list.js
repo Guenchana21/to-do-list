@@ -10,7 +10,23 @@ const errorMsg = document.getElementById("error-msg");
 let countLabel = document.getElementById("count-label");
 let doneLabel = document.getElementById("done-label");
 const emptyState = document.getElementById("empty-state");
+const emptyTitle = document.getElementById("empty-title");
+const emptyMessage = document.getElementById("empty-message");
+const greetingLabel = document.getElementById("greeting-label");
+const todayDate = document.getElementById("today-date");
+const progressLabel = document.getElementById("progress-label");
+const taskProgress = document.getElementById("task-progress");
 const filterButtons = document.querySelectorAll(".filter-btn");
+const taskDetailDialog = document.getElementById("task-detail-dialog");
+const taskDetailForm = document.getElementById("task-detail-form");
+const taskDetailHeading = document.getElementById("task-detail-heading");
+const taskDetailTitle = document.getElementById("detail-title");
+const taskDetailNote = document.getElementById("detail-note");
+const taskDetailDue = document.getElementById("detail-due");
+const taskDetailPriority = document.getElementById("detail-priority");
+const taskDetailStatus = document.getElementById("detail-status");
+const taskDetailDone = document.getElementById("detail-done");
+let activeDetailTask = null;
 
 const quoteText = document.getElementById("quote-text");
 const quoteAuthor = document.getElementById("quote-author");
@@ -30,6 +46,12 @@ const TASK_STATUSES = {
     canceled: "Canceled",
     resolved: "Resolved",
 };
+Object.entries(TASK_STATUSES).forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    taskDetailStatus.appendChild(option);
+});
 let currentFilter = "all";
 let currentSearch = "";
 let currentSort = "manual";
@@ -115,7 +137,7 @@ function createTask(
             <polyline points="20 6 9 17 4 12"></polyline>
         </svg>`;
 
-    // Task text + due badge live together in one column
+    // Task text and any assigned due-date badge live together in one column.
     const main = document.createElement("div");
     main.className = "task-main";
 
@@ -124,40 +146,11 @@ function createTask(
     span.textContent = text;
     span.title = "Double-click to edit";
 
-    // Due-date badge
-    const badge = document.createElement("button");
-    badge.type = "button";
+    const badge = document.createElement("span");
     badge.className = "due-badge";
-    badge.title = "Click to change due date";
-
-    const dateEditor = document.createElement("input");
-    dateEditor.type = "date";
-    dateEditor.className = "due-editor";
-    dateEditor.tabIndex = -1;
-
-    badge.addEventListener("click", () => {
-        dateEditor.value = li.dataset.due || "";
-        try {
-            dateEditor.showPicker();
-        } catch (err) {
-            dateEditor.focus();
-            dateEditor.click();
-        }
-    });
-
-    dateEditor.addEventListener("change", () => {
-        if (dateEditor.value) {
-            li.dataset.due = dateEditor.value;
-        } else {
-            delete li.dataset.due;
-        }
-        renderDue(li);
-        saveTasks();
-    });
 
     main.appendChild(span);
     main.appendChild(badge);
-    main.appendChild(dateEditor);
 
     // Priority tag
     const priorityBadge = document.createElement("button");
@@ -188,8 +181,10 @@ function createTask(
         statusSelect.appendChild(option);
     });
     statusSelect.value = li.dataset.status;
+    statusSelect.dataset.status = li.dataset.status;
     statusSelect.addEventListener("change", () => {
         li.dataset.status = statusSelect.value;
+        statusSelect.dataset.status = statusSelect.value;
         saveTasks();
     });
 
@@ -272,7 +267,17 @@ function createTask(
 
     del.addEventListener("click", () => deleteTask(li));
 
-    span.addEventListener("dblclick", () => startEdit(span, li));
+    span.setAttribute("role", "button");
+    span.tabIndex = 0;
+    span.setAttribute("aria-label", `Open details for ${text}`);
+    span.title = "Click to view or edit task details";
+    span.addEventListener("click", () => openTaskDetails(li));
+    span.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openTaskDetails(li);
+        }
+    });
 
     li.addEventListener("dragstart", () => li.classList.add("dragging"));
     li.addEventListener("dragend", () => {
@@ -297,48 +302,77 @@ function createTask(
     updateCounts();
 }
 
+function openTaskDetails(li) {
+    activeDetailTask = li;
+    const taskText = li.querySelector(".task-text").textContent;
+    taskDetailHeading.textContent = taskText;
+    taskDetailTitle.value = taskText;
+    taskDetailNote.value = li.querySelector(".task-notes").value;
+    taskDetailDue.value = li.dataset.due || "";
+    taskDetailPriority.value = li.dataset.priority || "medium";
+    taskDetailStatus.value = li.dataset.status || "pending";
+    taskDetailDone.checked = li.classList.contains("done");
+    taskDetailDialog.showModal();
+    taskDetailTitle.focus();
+}
+
+taskDetailTitle.addEventListener("input", () => {
+    taskDetailHeading.textContent = taskDetailTitle.value || "Task details";
+});
+
+taskDetailForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!activeDetailTask) return;
+
+    const title = taskDetailTitle.value.trim();
+    if (!title) {
+        taskDetailTitle.focus();
+        return;
+    }
+
+    const li = activeDetailTask;
+    const taskText = li.querySelector(".task-text");
+    const notes = li.querySelector(".task-notes");
+    const noteButton = li.querySelector(".note-toggle");
+    const statusSelect = li.querySelector(".status-select");
+
+    taskText.textContent = title;
+    taskText.setAttribute("aria-label", `Open details for ${title}`);
+    taskText.title = "Click to view or edit task details";
+    notes.value = taskDetailNote.value;
+    notes.setAttribute("aria-label", `Notes for ${title}`);
+    noteButton.textContent = notes.value.trim() ? "Edit note" : "+ Add note";
+    li.dataset.due = taskDetailDue.value;
+    li.dataset.priority = taskDetailPriority.value;
+    li.dataset.status = taskDetailStatus.value;
+    statusSelect.value = taskDetailStatus.value;
+    li.classList.toggle("done", taskDetailDone.checked);
+
+    renderDue(li);
+    renderPriority(li);
+    updateCounts();
+    applySort();
+    applyFilter();
+    saveTasks();
+    taskDetailDialog.close();
+});
+
+document
+    .getElementById("task-detail-close")
+    .addEventListener("click", () => taskDetailDialog.close());
+document
+    .getElementById("task-detail-cancel")
+    .addEventListener("click", () => taskDetailDialog.close());
+taskDetailDialog.addEventListener("close", () => {
+    activeDetailTask = null;
+});
+
 function renderPriority(li) {
     const badge = li.querySelector(".priority-badge");
     const priority = li.dataset.priority || "medium";
     const labels = { low: "Low", medium: "Medium", high: "High" };
     badge.className = `priority-badge ${priority}`;
     badge.textContent = labels[priority];
-}
-
-// =========================================================
-// Edit a task
-// =========================================================
-function startEdit(span, li) {
-    const editor = document.createElement("input");
-    editor.type = "text";
-    editor.className = "edit-input";
-    editor.value = span.textContent;
-
-    li.draggable = false;
-    span.replaceWith(editor);
-    editor.focus();
-    editor.select();
-
-    let finished = false;
-
-    function finish(save) {
-        if (finished) return;
-        finished = true;
-
-        const newText = editor.value.trim();
-        if (save && newText !== "") span.textContent = newText;
-
-        editor.replaceWith(span);
-        li.draggable = true;
-        saveTasks();
-    }
-
-    editor.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") finish(true);
-        if (e.key === "Escape") finish(false);
-    });
-
-    editor.addEventListener("blur", () => finish(true));
 }
 
 // =========================================================
@@ -356,11 +390,11 @@ function renderDue(li) {
     const due = li.dataset.due;
 
     if (!due) {
-        badge.className = "due-badge empty";
-        badge.textContent = "+ Add due date";
+        badge.hidden = true;
         return;
     }
 
+    badge.hidden = false;
     const pretty = new Date(due + "T00:00:00").toLocaleDateString(undefined, {
         month: "short",
         day: "numeric",
@@ -526,7 +560,29 @@ function updateCounts() {
     const doneItems = list.querySelectorAll("li.done");
     countLabel.textContent = `${items.length} task${items.length === 1 ? "" : "s"}`;
     doneLabel.textContent = items.length ? `${doneItems.length} done` : "";
+    updateDashboard(items.length, doneItems.length);
     toggleEmptyState();
+}
+
+function updateDashboard(total, completed) {
+    const now = new Date();
+    const hour = now.getHours();
+    greetingLabel.textContent =
+        hour < 12
+            ? "Good morning."
+            : hour < 18
+              ? "Good afternoon."
+              : "Good evening.";
+    todayDate.textContent = now.toLocaleDateString(undefined, {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+    todayDate.dateTime = now.toISOString().slice(0, 10);
+    progressLabel.textContent = `${completed} of ${total} task${total === 1 ? "" : "s"} complete`;
+    taskProgress.max = Math.max(total, 1);
+    taskProgress.value = completed;
 }
 
 function toggleEmptyState() {
@@ -534,6 +590,21 @@ function toggleEmptyState() {
         (li) => li.style.display !== "none",
     );
     emptyState.style.display = visibleItems.length === 0 ? "block" : "none";
+    if (visibleItems.length > 0) return;
+
+    if (currentSearch) {
+        emptyTitle.textContent = "No matching tasks";
+        emptyMessage.textContent = "Try another search term.";
+    } else if (currentFilter === "done") {
+        emptyTitle.textContent = "No completed tasks yet";
+        emptyMessage.textContent = "Completed tasks will show up here.";
+    } else if (currentFilter === "active" && list.children.length > 0) {
+        emptyTitle.textContent = "All caught up!";
+        emptyMessage.textContent = "You have no active tasks right now.";
+    } else {
+        emptyTitle.textContent = "Nothing on your list yet";
+        emptyMessage.textContent = "Add a task above to get started.";
+    }
 }
 
 // =========================================================
