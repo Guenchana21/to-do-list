@@ -605,13 +605,9 @@ function updateCounts() {
 
 function updateDashboard(total, completed) {
     const now = new Date();
-    const hour = now.getHours();
-    greetingLabel.textContent =
-        hour < 12
-            ? "Good morning."
-            : hour < 18
-              ? "Good afternoon."
-              : "Good evening.";
+    greetingLabel.textContent = document.body.classList.contains("night-mode")
+        ? "Good evening."
+        : "Good day.";
     todayDate.textContent = now.toLocaleDateString(undefined, {
         weekday: "long",
         month: "long",

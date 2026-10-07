@@ -44,7 +44,7 @@ body {
     justify-content: center;
     font-family: Inter, "Segoe UI", sans-serif;
     color: var(--text);
-    background-image: url("night-sky.webp");
+    background-image: url("starry-sun.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -927,7 +927,7 @@ select {
 }
 
 body.night-mode {
-    background-image: url("starry-sun.webp");
+    background-image: url("night-sky.webp");
     color: #e5eefb;
 }
 
