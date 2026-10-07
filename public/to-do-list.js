@@ -12,7 +12,6 @@ let doneLabel = document.getElementById("done-label");
 const emptyState = document.getElementById("empty-state");
 const filterButtons = document.querySelectorAll(".filter-btn");
 
-const quoteBtn = document.getElementById("quote-btn");
 const quoteText = document.getElementById("quote-text");
 const quoteAuthor = document.getElementById("quote-author");
 
@@ -688,8 +687,6 @@ let quoteIsChanging = false;
 async function fetchQuote() {
     if (quoteIsChanging) return;
     quoteIsChanging = true;
-    quoteBtn.disabled = true;
-    quoteBtn.textContent = "Loading...";
 
     let nextQuote;
     let nextAuthor;
@@ -719,15 +716,8 @@ async function fetchQuote() {
         quoteText.classList.remove("is-fading");
         quoteAuthor.classList.remove("is-fading");
         quoteIsChanging = false;
-        quoteBtn.disabled = false;
-        quoteBtn.textContent = "New Quote";
     }
 }
-
-quoteBtn.addEventListener("click", () => {
-    fetchQuote();
-    restartQuoteTimer();
-});
 
 function restartQuoteTimer() {
     clearInterval(quoteTimer);
